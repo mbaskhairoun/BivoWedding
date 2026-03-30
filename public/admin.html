@@ -1,0 +1,1777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bino &amp; Vivo | Admin Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Josefin+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    /* ── Reset & Base ────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sage: #8faa8c;
+      --sage-light: #b5cdb3;
+      --sage-dark: #6b8a68;
+      --hydrangea: #7ba7c2;
+      --hydrangea-light: #a7cce0;
+      --hydrangea-dark: #5a8aaa;
+      --cream: #fdf9f0;
+      --cream-dark: #f5edd8;
+      --gold: #d4b96a;
+      --gold-light: #e6d49a;
+      --text: #4a5a47;
+      --text-light: #7a8a77;
+      --danger: #c27b7b;
+      --danger-dark: #a85c5c;
+      --success: #7baa7e;
+      --glass-bg: rgba(253, 249, 240, 0.72);
+      --glass-border: rgba(143, 170, 140, 0.25);
+      --shadow: 0 4px 24px rgba(74, 90, 71, 0.08);
+      --shadow-lg: 0 8px 40px rgba(74, 90, 71, 0.12);
+      --radius: 16px;
+      --radius-sm: 12px;
+      --radius-lg: 20px;
+    }
+
+    body {
+      font-family: 'Josefin Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+      background-image:
+        radial-gradient(ellipse at 10% 20%, rgba(143,170,140,0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 90% 80%, rgba(123,167,194,0.10) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(212,185,106,0.06) 0%, transparent 60%);
+    }
+
+    h1, h2, h3, h4, h5 { font-family: 'Cormorant Garamond', serif; }
+
+    /* ── Login Page ──────────────────────────────────────────── */
+    #login-page {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .login-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 48px 40px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: var(--shadow-lg);
+      text-align: center;
+    }
+
+    .login-card h1 {
+      font-size: 2.4rem;
+      color: var(--sage-dark);
+      margin-bottom: 4px;
+      font-weight: 300;
+      letter-spacing: 2px;
+    }
+
+    .login-card .subtitle {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-bottom: 32px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-light);
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.6);
+      color: var(--text);
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      outline: none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--sage);
+      box-shadow: 0 0 0 3px rgba(143,170,140,0.15);
+      background: rgba(255,255,255,0.85);
+    }
+
+    textarea { resize: vertical; min-height: 100px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--sage), var(--sage-dark));
+      color: white;
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(143,170,140,0.35); }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, var(--hydrangea), var(--hydrangea-dark));
+      color: white;
+    }
+    .btn-secondary:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(123,167,194,0.35); }
+
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold), #c5a855);
+      color: white;
+    }
+    .btn-gold:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(212,185,106,0.4); }
+
+    .btn-danger {
+      background: linear-gradient(135deg, var(--danger), var(--danger-dark));
+      color: white;
+    }
+    .btn-danger:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(194,123,123,0.35); }
+
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid var(--sage);
+      color: var(--sage-dark);
+    }
+    .btn-outline:hover { background: rgba(143,170,140,0.08); }
+
+    .btn-sm { padding: 8px 14px; font-size: 0.8rem; }
+    .btn-full { width: 100%; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+    .login-error {
+      color: var(--danger-dark);
+      font-size: 0.85rem;
+      margin-top: 12px;
+      display: none;
+    }
+
+    /* ── Dashboard Layout ────────────────────────────────────── */
+    #dashboard { display: none; }
+
+    .top-bar {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--glass-border);
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .top-bar h2 {
+      font-size: 1.5rem;
+      font-weight: 300;
+      color: var(--sage-dark);
+      letter-spacing: 2px;
+    }
+
+    .top-bar .user-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.85rem;
+      color: var(--text-light);
+    }
+
+    .tab-bar {
+      display: flex;
+      gap: 4px;
+      padding: 16px 32px 0;
+      border-bottom: 1px solid var(--glass-border);
+      background: rgba(253,249,240,0.4);
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      padding: 12px 24px;
+      border: none;
+      background: none;
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 400;
+      color: var(--text-light);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      letter-spacing: 0.5px;
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    }
+
+    .tab-btn:hover { color: var(--sage-dark); background: rgba(143,170,140,0.05); }
+    .tab-btn.active {
+      color: var(--sage-dark);
+      border-bottom-color: var(--sage);
+      font-weight: 600;
+      background: rgba(143,170,140,0.08);
+    }
+
+    .tab-content { display: none; padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
+    .tab-content.active { display: block; }
+
+    /* ── Cards & Panels ──────────────────────────────────────── */
+    .card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+    }
+
+    .card h3 {
+      font-size: 1.3rem;
+      color: var(--sage-dark);
+      margin-bottom: 16px;
+      font-weight: 400;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card .stat-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: var(--sage-dark);
+      line-height: 1;
+    }
+
+    .stat-card .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-top: 6px;
+    }
+
+    /* ── Tables ──────────────────────────────────────────────── */
+    .table-wrapper { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 0.88rem;
+    }
+
+    thead th {
+      background: rgba(143,170,140,0.1);
+      padding: 12px 14px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-light);
+      border-bottom: 2px solid var(--glass-border);
+    }
+
+    thead th:first-child { border-radius: var(--radius-sm) 0 0 0; }
+    thead th:last-child { border-radius: 0 var(--radius-sm) 0 0; }
+
+    tbody tr { transition: background 0.2s; }
+    tbody tr:hover { background: rgba(143,170,140,0.05); }
+
+    tbody td {
+      padding: 11px 14px;
+      border-bottom: 1px solid rgba(143,170,140,0.1);
+      vertical-align: middle;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .badge-attending { background: rgba(123,170,126,0.15); color: var(--success); }
+    .badge-declined { background: rgba(194,123,123,0.15); color: var(--danger); }
+    .badge-pending { background: rgba(212,185,106,0.15); color: var(--gold); }
+
+    /* ── Toolbar ─────────────────────────────────────────────── */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .toolbar .search-input {
+      flex: 1;
+      min-width: 200px;
+      max-width: 360px;
+    }
+
+    .toolbar .filter-select {
+      width: auto;
+      min-width: 150px;
+    }
+
+    /* ── Modal ───────────────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(74,90,71,0.35);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--cream);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+
+    .modal h3 {
+      font-size: 1.4rem;
+      color: var(--sage-dark);
+      margin-bottom: 20px;
+      font-weight: 400;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      background: none;
+      border: none;
+      font-size: 1.6rem;
+      color: var(--text-light);
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 24px;
+    }
+
+    /* ── Toggle ──────────────────────────────────────────────── */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(143,170,140,0.1);
+    }
+
+    .toggle-row:last-child { border-bottom: none; }
+
+    .toggle-label {
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+
+    .toggle {
+      position: relative;
+      width: 48px;
+      height: 26px;
+      cursor: pointer;
+    }
+
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+
+    .toggle .slider {
+      position: absolute;
+      inset: 0;
+      background: #ccc;
+      border-radius: 26px;
+      transition: background 0.3s;
+    }
+
+    .toggle .slider::before {
+      content: '';
+      position: absolute;
+      left: 3px;
+      top: 3px;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.3s;
+    }
+
+    .toggle input:checked + .slider { background: var(--sage); }
+    .toggle input:checked + .slider::before { transform: translateX(22px); }
+
+    /* ── Charts ──────────────────────────────────────────────── */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 24px;
+    }
+
+    .chart-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .chart-card h4 {
+      font-size: 1.1rem;
+      color: var(--sage-dark);
+      margin-bottom: 16px;
+      font-weight: 400;
+    }
+
+    /* ── Email Tab ────────────────────────────────────────────── */
+    .email-layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 24px;
+    }
+
+    .recipient-list {
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+
+    .recipient-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(143,170,140,0.08);
+      font-size: 0.85rem;
+    }
+
+    .recipient-item input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--sage);
+    }
+
+    /* ── Import Preview ──────────────────────────────────────── */
+    .import-preview {
+      max-height: 300px;
+      overflow: auto;
+      margin: 16px 0;
+    }
+
+    .import-preview table { font-size: 0.8rem; }
+    .import-preview td, .import-preview th { padding: 6px 10px; }
+    .import-dup { background: rgba(212,185,106,0.12); }
+
+    /* ── Misc ────────────────────────────────────────────────── */
+    .flex-between { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .flex-gap { display: flex; gap: 12px; flex-wrap: wrap; }
+    .mt-1 { margin-top: 8px; }
+    .mt-2 { margin-top: 16px; }
+    .mb-1 { margin-bottom: 8px; }
+    .mb-2 { margin-bottom: 16px; }
+    .text-sm { font-size: 0.82rem; }
+    .text-muted { color: var(--text-light); }
+    .text-center { text-align: center; }
+    .hidden { display: none !important; }
+
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toast {
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      color: white;
+      box-shadow: var(--shadow);
+      animation: slideIn 0.3s ease;
+      max-width: 360px;
+    }
+
+    .toast-success { background: var(--success); }
+    .toast-error { background: var(--danger); }
+    .toast-info { background: var(--hydrangea); }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(40px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ── Responsive ──────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .email-layout { grid-template-columns: 1fr; }
+      .tab-content { padding: 20px 16px; }
+      .top-bar { padding: 12px 16px; }
+      .tab-bar { padding: 12px 16px 0; }
+    }
+
+    @media (max-width: 600px) {
+      .login-card { padding: 32px 24px; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .charts-grid { grid-template-columns: 1fr; }
+      .modal { padding: 24px 18px; }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--sage-light); border-radius: 10px; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════ LOGIN PAGE ═══════════ -->
+<div id="login-page">
+  <div class="login-card">
+    <h1>Bino &amp; Vivo</h1>
+    <p class="subtitle">Admin Dashboard</p>
+    <form id="login-form">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="login-email" required autocomplete="email" placeholder="admin@binovivo.ca" />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="login-password" required autocomplete="current-password" placeholder="Enter password" />
+      </div>
+      <button type="submit" class="btn btn-primary btn-full" id="login-btn">Sign In</button>
+      <p class="login-error" id="login-error"></p>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════════ DASHBOARD ═══════════ -->
+<div id="dashboard">
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <h2>Bino &amp; Vivo</h2>
+    <div class="user-info">
+      <span id="user-email"></span>
+      <button class="btn btn-outline btn-sm" id="logout-btn">Sign Out</button>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="guests">Guest List</button>
+    <button class="tab-btn" data-tab="settings">Form Settings</button>
+    <button class="tab-btn" data-tab="rsvps">RSVPs</button>
+    <button class="tab-btn" data-tab="analytics">Analytics</button>
+    <button class="tab-btn" data-tab="email">Email</button>
+  </div>
+
+  <!-- ═══ TAB 1: GUEST LIST ═══ -->
+  <div class="tab-content active" id="tab-guests">
+    <div class="stats-row" id="guest-stats"></div>
+
+    <div class="toolbar">
+      <input type="text" class="search-input" id="guest-search" placeholder="Search guests..." />
+      <button class="btn btn-primary btn-sm" id="add-guest-btn">+ Add Guest</button>
+      <button class="btn btn-secondary btn-sm" id="import-btn">Import Excel/CSV</button>
+    </div>
+
+    <div class="card">
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Invitation Name</th>
+              <th>Members</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Notes</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="guest-table-body"></tbody>
+        </table>
+      </div>
+      <p class="text-sm text-muted mt-2" id="guest-table-info"></p>
+    </div>
+  </div>
+
+  <!-- ═══ TAB 2: FORM SETTINGS ═══ -->
+  <div class="tab-content" id="tab-settings">
+    <div class="card">
+      <h3>RSVP Form Configuration</h3>
+      <div class="toggle-row">
+        <span class="toggle-label"><strong>RSVP Form Open</strong> &mdash; Allow guests to submit RSVPs</span>
+        <label class="toggle">
+          <input type="checkbox" id="toggle-rsvpOpen" />
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Visible Form Fields</h3>
+      <p class="text-sm text-muted mb-2">Toggle which fields appear on the RSVP form.</p>
+      <div id="field-toggles"></div>
+    </div>
+
+    <div style="margin-top:16px">
+      <button class="btn btn-primary" id="save-settings-btn">Save Settings</button>
+    </div>
+  </div>
+
+  <!-- ═══ TAB 3: RSVPs ═══ -->
+  <div class="tab-content" id="tab-rsvps">
+    <div class="stats-row" id="rsvp-stats"></div>
+
+    <div class="toolbar">
+      <select class="filter-select" id="rsvp-filter">
+        <option value="all">All RSVPs</option>
+        <option value="attending">Attending</option>
+        <option value="declined">Declined</option>
+      </select>
+      <select class="filter-select" id="rsvp-view-mode">
+        <option value="invitation">By Invitation</option>
+        <option value="guest">By Guest</option>
+      </select>
+      <button class="btn btn-gold btn-sm" id="export-rsvps-btn">Export CSV</button>
+    </div>
+
+    <div class="card">
+      <div class="table-wrapper">
+        <table>
+          <thead id="rsvp-table-head"></thead>
+          <tbody id="rsvp-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TAB 4: ANALYTICS ═══ -->
+  <div class="tab-content" id="tab-analytics">
+    <div class="stats-row" id="analytics-stats"></div>
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h4>RSVP Timeline</h4>
+        <canvas id="chart-timeline"></canvas>
+      </div>
+      <div class="chart-card">
+        <h4>Attendance Breakdown</h4>
+        <canvas id="chart-attendance"></canvas>
+      </div>
+      <div class="chart-card">
+        <h4>Meal Preferences</h4>
+        <canvas id="chart-meals"></canvas>
+      </div>
+      <div class="chart-card">
+        <h4>Family Size Distribution</h4>
+        <canvas id="chart-family"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TAB 5: EMAIL ═══ -->
+  <div class="tab-content" id="tab-email">
+    <div class="email-layout">
+      <div class="card">
+        <h3>Recipients</h3>
+        <div class="form-group">
+          <select class="filter-select" id="email-filter" style="width:100%">
+            <option value="all">All with Email</option>
+            <option value="attending">Attending</option>
+            <option value="declined">Declined</option>
+            <option value="pending">Pending RSVP</option>
+          </select>
+        </div>
+        <div class="flex-gap mb-1">
+          <button class="btn btn-outline btn-sm" id="email-select-all">Select All</button>
+          <button class="btn btn-outline btn-sm" id="email-deselect-all">Deselect All</button>
+        </div>
+        <div class="recipient-list" id="recipient-list"></div>
+        <div class="mt-2">
+          <label class="text-sm text-muted">Add custom recipient</label>
+          <div class="flex-gap mt-1">
+            <input type="email" id="custom-recipient" placeholder="email@example.com" style="flex:1" />
+            <button class="btn btn-outline btn-sm" id="add-custom-recipient">Add</button>
+          </div>
+        </div>
+        <p class="text-sm text-muted mt-1" id="recipient-count">0 recipients selected</p>
+      </div>
+
+      <div>
+        <div class="card">
+          <h3>Compose</h3>
+          <div class="form-group">
+            <label>From</label>
+            <input type="text" value="info@binovivo.ca" readonly style="background:rgba(143,170,140,0.06)" />
+          </div>
+          <div class="form-group">
+            <label>Subject</label>
+            <input type="text" id="email-subject" placeholder="Wedding update from Bino & Vivo" />
+          </div>
+          <div class="form-group">
+            <label>Message (HTML supported)</label>
+            <textarea id="email-body" rows="10" placeholder="Write your message here..."></textarea>
+          </div>
+          <button class="btn btn-primary" id="send-email-btn">Send Email</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ MODALS ═══════════ -->
+
+<!-- Add/Edit Guest Modal -->
+<div class="modal-overlay" id="guest-modal">
+  <div class="modal">
+    <button class="modal-close" id="guest-modal-close">&times;</button>
+    <h3 id="guest-modal-title">Add Guest</h3>
+    <form id="guest-form">
+      <input type="hidden" id="guest-edit-id" />
+      <div class="form-group">
+        <label>Invitation Name</label>
+        <input type="text" id="guest-invitation-name" required placeholder="e.g., The Smith Family" />
+      </div>
+      <div class="form-group">
+        <label>Family Members (comma-separated)</label>
+        <input type="text" id="guest-members" required placeholder="e.g., John Smith, Jane Smith, Tommy Smith" />
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="guest-email" placeholder="email@example.com" />
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="guest-notes" rows="3" placeholder="Any notes..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" id="guest-modal-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="guest-modal-save">Save Guest</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Import Modal -->
+<div class="modal-overlay" id="import-modal">
+  <div class="modal" style="max-width:750px">
+    <button class="modal-close" id="import-modal-close">&times;</button>
+    <h3>Import Guests from Excel/CSV</h3>
+    <p class="text-sm text-muted mb-2">Upload a file with columns: <strong>Invitation Name, Guest Name, Email, Notes</strong>. Rows with the same invitation name will be grouped.</p>
+    <div class="form-group">
+      <input type="file" id="import-file" accept=".xlsx,.xls,.csv" />
+    </div>
+    <div class="import-preview hidden" id="import-preview">
+      <h4 style="font-size:0.95rem; margin-bottom:8px">Preview</h4>
+      <div class="table-wrapper">
+        <table>
+          <thead id="import-preview-head"></thead>
+          <tbody id="import-preview-body"></tbody>
+        </table>
+      </div>
+      <p class="text-sm text-muted mt-1" id="import-info"></p>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-outline" id="import-modal-cancel">Cancel</button>
+      <button type="button" class="btn btn-primary" id="import-confirm-btn" disabled>Import Guests</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal" style="max-width:420px">
+    <button class="modal-close" id="delete-modal-close">&times;</button>
+    <h3>Confirm Delete</h3>
+    <p id="delete-message">Are you sure you want to delete this item? This action cannot be undone.</p>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-outline" id="delete-cancel">Cancel</button>
+      <button type="button" class="btn btn-danger" id="delete-confirm">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- ═══════════ JAVASCRIPT ═══════════ -->
+<script type="module">
+  // ── Firebase SDK (v11 CDN) ──────────────────────────────────
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js';
+  import {
+    getFirestore, collection, doc, getDocs, getDoc, setDoc, addDoc,
+    updateDoc, deleteDoc, query, orderBy, where, onSnapshot, Timestamp
+  } from 'https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js';
+  import {
+    getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
+  } from 'https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js';
+
+  // ── Firebase Config ─────────────────────────────────────────
+  const firebaseConfig = {
+    apiKey: "AIzaSyCBGVfF7OkmwK57Nwd2JcN63Bzrs8EpNrI",
+    authDomain: "bivo-wedding.firebaseapp.com",
+    projectId: "bivo-wedding",
+    storageBucket: "bivo-wedding.firebasestorage.app",
+    messagingSenderId: "524762212362",
+    appId: "1:524762212362:web:2e7ae77af8f752b3c357f3",
+    measurementId: "G-PKVTLSPDS0"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  // ── State ───────────────────────────────────────────────────
+  let guests = [];
+  let rsvps = [];
+  let formConfig = {};
+  let charts = {};
+  let pendingDelete = null;
+  let importData = [];
+  let customRecipients = [];
+
+  // ── DOM Refs ────────────────────────────────────────────────
+  const $ = (sel) => document.querySelector(sel);
+  const $$ = (sel) => document.querySelectorAll(sel);
+
+  // ── Toast ───────────────────────────────────────────────────
+  function toast(msg, type = 'info') {
+    const el = document.createElement('div');
+    el.className = `toast toast-${type}`;
+    el.textContent = msg;
+    $('#toast-container').appendChild(el);
+    setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 3500);
+  }
+
+  // ── Auth ────────────────────────────────────────────────────
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      $('#login-page').style.display = 'none';
+      $('#dashboard').style.display = 'block';
+      $('#user-email').textContent = user.email;
+      loadAllData();
+    } else {
+      $('#login-page').style.display = 'flex';
+      $('#dashboard').style.display = 'none';
+    }
+  });
+
+  $('#login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = $('#login-btn');
+    btn.disabled = true;
+    btn.textContent = 'Signing in...';
+    $('#login-error').style.display = 'none';
+    try {
+      await signInWithEmailAndPassword(auth, $('#login-email').value.trim(), $('#login-password').value);
+    } catch (err) {
+      $('#login-error').textContent = err.message.replace('Firebase: ', '');
+      $('#login-error').style.display = 'block';
+    }
+    btn.disabled = false;
+    btn.textContent = 'Sign In';
+  });
+
+  $('#logout-btn').addEventListener('click', () => signOut(auth));
+
+  // ── Tab Navigation ──────────────────────────────────────────
+  $$('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      $$('.tab-btn').forEach(b => b.classList.remove('active'));
+      $$('.tab-content').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      $(`#tab-${btn.dataset.tab}`).classList.add('active');
+      if (btn.dataset.tab === 'analytics') renderAnalytics();
+      if (btn.dataset.tab === 'email') renderRecipients();
+      if (btn.dataset.tab === 'rsvps') renderRsvps();
+    });
+  });
+
+  // ── Load All Data ───────────────────────────────────────────
+  async function loadAllData() {
+    await Promise.all([loadGuests(), loadRsvps(), loadSettings()]);
+  }
+
+  // ── GUESTS ──────────────────────────────────────────────────
+  async function loadGuests() {
+    try {
+      const snap = await getDocs(query(collection(db, 'guests'), orderBy('invitationName')));
+      guests = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderGuests();
+    } catch (err) {
+      toast('Failed to load guests: ' + err.message, 'error');
+    }
+  }
+
+  function renderGuests(filter = '') {
+    const tbody = $('#guest-table-body');
+    const search = filter.toLowerCase();
+    const filtered = guests.filter(g => {
+      if (!search) return true;
+      const haystack = [
+        g.invitationName,
+        (g.members || []).join(' '),
+        g.email || '',
+        g.notes || ''
+      ].join(' ').toLowerCase();
+      return fuzzyMatch(haystack, search);
+    });
+
+    tbody.innerHTML = filtered.map(g => `
+      <tr>
+        <td><strong>${esc(g.invitationName)}</strong></td>
+        <td>${(g.members || []).map(m => esc(m)).join(', ')}</td>
+        <td>${esc(g.email || '—')}</td>
+        <td>${g.hasRsvped
+          ? '<span class="badge badge-attending">RSVPed</span>'
+          : '<span class="badge badge-pending">Pending</span>'
+        }</td>
+        <td class="text-sm">${esc(g.notes || '')}</td>
+        <td>
+          <div class="flex-gap">
+            <button class="btn btn-outline btn-sm" onclick="window._editGuest('${g.id}')">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="window._deleteGuest('${g.id}','${esc(g.invitationName)}')">Del</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+
+    // Stats
+    const totalInvitations = guests.length;
+    const totalGuests = guests.reduce((s, g) => s + (g.members ? g.members.length : 0), 0);
+    const rsvpedCount = guests.filter(g => g.hasRsvped).length;
+
+    $('#guest-stats').innerHTML = `
+      <div class="stat-card"><div class="stat-value">${totalInvitations}</div><div class="stat-label">Invitations</div></div>
+      <div class="stat-card"><div class="stat-value">${totalGuests}</div><div class="stat-label">Total Guests</div></div>
+      <div class="stat-card"><div class="stat-value">${rsvpedCount}</div><div class="stat-label">RSVPed</div></div>
+    `;
+
+    $('#guest-table-info').textContent = `Showing ${filtered.length} of ${guests.length} invitations`;
+  }
+
+  // Search
+  $('#guest-search').addEventListener('input', (e) => renderGuests(e.target.value));
+
+  // Fuzzy match
+  function fuzzyMatch(haystack, needle) {
+    if (haystack.includes(needle)) return true;
+    let hi = 0;
+    for (let ni = 0; ni < needle.length; ni++) {
+      const ch = needle[ni];
+      while (hi < haystack.length && haystack[hi] !== ch) hi++;
+      if (hi >= haystack.length) return false;
+      hi++;
+    }
+    return true;
+  }
+
+  // Add Guest
+  $('#add-guest-btn').addEventListener('click', () => {
+    $('#guest-modal-title').textContent = 'Add Guest';
+    $('#guest-form').reset();
+    $('#guest-edit-id').value = '';
+    openModal('guest-modal');
+  });
+
+  // Edit Guest
+  window._editGuest = (id) => {
+    const g = guests.find(x => x.id === id);
+    if (!g) return;
+    $('#guest-modal-title').textContent = 'Edit Guest';
+    $('#guest-edit-id').value = id;
+    $('#guest-invitation-name').value = g.invitationName || '';
+    $('#guest-members').value = (g.members || []).join(', ');
+    $('#guest-email').value = g.email || '';
+    $('#guest-notes').value = g.notes || '';
+    openModal('guest-modal');
+  };
+
+  // Save Guest
+  $('#guest-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = $('#guest-edit-id').value;
+    const data = {
+      invitationName: $('#guest-invitation-name').value.trim(),
+      members: $('#guest-members').value.split(',').map(s => s.trim()).filter(Boolean),
+      email: $('#guest-email').value.trim() || null,
+      notes: $('#guest-notes').value.trim() || null,
+      updatedAt: Timestamp.now()
+    };
+
+    try {
+      if (id) {
+        await updateDoc(doc(db, 'guests', id), data);
+        toast('Guest updated', 'success');
+      } else {
+        data.hasRsvped = false;
+        data.createdAt = Timestamp.now();
+        await addDoc(collection(db, 'guests'), data);
+        toast('Guest added', 'success');
+      }
+      closeModal('guest-modal');
+      await loadGuests();
+    } catch (err) {
+      toast('Error saving guest: ' + err.message, 'error');
+    }
+  });
+
+  // Delete Guest
+  window._deleteGuest = (id, name) => {
+    pendingDelete = { type: 'guest', id };
+    $('#delete-message').textContent = `Delete invitation "${name}" and all associated data?`;
+    openModal('delete-modal');
+  };
+
+  // ── IMPORT ──────────────────────────────────────────────────
+  $('#import-btn').addEventListener('click', () => {
+    $('#import-file').value = '';
+    $('#import-preview').classList.add('hidden');
+    $('#import-confirm-btn').disabled = true;
+    importData = [];
+    openModal('import-modal');
+  });
+
+  $('#import-file').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const wb = XLSX.read(evt.target.result, { type: 'array' });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const json = XLSX.utils.sheet_to_json(ws, { defval: '' });
+        if (!json.length) { toast('File is empty', 'error'); return; }
+
+        // Normalize column headers
+        const rows = json.map(row => {
+          const norm = {};
+          Object.keys(row).forEach(k => {
+            const lk = k.toLowerCase().replace(/[^a-z]/g, '');
+            if (lk.includes('invitation') || lk === 'group' || lk === 'family') norm.invitationName = String(row[k]).trim();
+            else if (lk.includes('guest') || lk === 'name' || lk === 'member') norm.guestName = String(row[k]).trim();
+            else if (lk.includes('email')) norm.email = String(row[k]).trim();
+            else if (lk.includes('note')) norm.notes = String(row[k]).trim();
+          });
+          return norm;
+        }).filter(r => r.invitationName || r.guestName);
+
+        // Detect duplicates
+        const existingNames = new Set(guests.map(g => g.invitationName.toLowerCase()));
+        rows.forEach(r => {
+          r._dup = r.invitationName && existingNames.has(r.invitationName.toLowerCase());
+        });
+
+        importData = rows;
+        renderImportPreview(rows);
+        $('#import-preview').classList.remove('hidden');
+        $('#import-confirm-btn').disabled = false;
+
+        const dupCount = rows.filter(r => r._dup).length;
+        const info = `${rows.length} rows parsed.`;
+        $('#import-info').textContent = dupCount ? `${info} ${dupCount} potential duplicate(s) highlighted.` : info;
+      } catch (err) {
+        toast('Error reading file: ' + err.message, 'error');
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  });
+
+  function renderImportPreview(rows) {
+    $('#import-preview-head').innerHTML = '<tr><th>Invitation Name</th><th>Guest Name</th><th>Email</th><th>Notes</th></tr>';
+    $('#import-preview-body').innerHTML = rows.map(r => `
+      <tr class="${r._dup ? 'import-dup' : ''}">
+        <td>${esc(r.invitationName || '')}</td>
+        <td>${esc(r.guestName || '')}</td>
+        <td>${esc(r.email || '')}</td>
+        <td>${esc(r.notes || '')}</td>
+      </tr>
+    `).join('');
+  }
+
+  $('#import-confirm-btn').addEventListener('click', async () => {
+    if (!importData.length) return;
+    $('#import-confirm-btn').disabled = true;
+    $('#import-confirm-btn').textContent = 'Importing...';
+
+    try {
+      // Group by invitation name
+      const grouped = {};
+      importData.forEach(r => {
+        const key = r.invitationName || r.guestName || 'Unknown';
+        if (!grouped[key]) grouped[key] = { invitationName: key, members: [], email: '', notes: '' };
+        if (r.guestName) grouped[key].members.push(r.guestName);
+        if (r.email && !grouped[key].email) grouped[key].email = r.email;
+        if (r.notes && !grouped[key].notes) grouped[key].notes = r.notes;
+      });
+
+      let added = 0;
+      for (const g of Object.values(grouped)) {
+        await addDoc(collection(db, 'guests'), {
+          invitationName: g.invitationName,
+          members: g.members.length ? g.members : [g.invitationName],
+          email: g.email || null,
+          notes: g.notes || null,
+          hasRsvped: false,
+          createdAt: Timestamp.now(),
+          updatedAt: Timestamp.now()
+        });
+        added++;
+      }
+
+      toast(`Imported ${added} invitation(s)`, 'success');
+      closeModal('import-modal');
+      await loadGuests();
+    } catch (err) {
+      toast('Import failed: ' + err.message, 'error');
+    }
+
+    $('#import-confirm-btn').disabled = false;
+    $('#import-confirm-btn').textContent = 'Import Guests';
+  });
+
+  // ── RSVPs ───────────────────────────────────────────────────
+  async function loadRsvps() {
+    try {
+      const snap = await getDocs(query(collection(db, 'rsvps'), orderBy('submittedAt', 'desc')));
+      rsvps = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderRsvps();
+    } catch (err) {
+      toast('Failed to load RSVPs: ' + err.message, 'error');
+    }
+  }
+
+  function renderRsvps() {
+    const filter = $('#rsvp-filter').value;
+    const mode = $('#rsvp-view-mode').value;
+
+    let filtered = [...rsvps];
+    if (filter === 'attending') filtered = filtered.filter(r => r.attending === true);
+    if (filter === 'declined') filtered = filtered.filter(r => r.attending === false);
+
+    // Stats
+    const totalRsvps = rsvps.length;
+    const attendingCount = rsvps.filter(r => r.attending === true).length;
+    const declinedCount = rsvps.filter(r => r.attending === false).length;
+    const headcount = rsvps.filter(r => r.attending).reduce((s, r) => s + (r.guestCount || r.attendingCount || 1), 0);
+
+    $('#rsvp-stats').innerHTML = `
+      <div class="stat-card"><div class="stat-value">${totalRsvps}</div><div class="stat-label">Total RSVPs</div></div>
+      <div class="stat-card"><div class="stat-value">${attendingCount}</div><div class="stat-label">Attending</div></div>
+      <div class="stat-card"><div class="stat-value">${declinedCount}</div><div class="stat-label">Declined</div></div>
+      <div class="stat-card"><div class="stat-value">${headcount}</div><div class="stat-label">Headcount</div></div>
+    `;
+
+    if (mode === 'invitation') renderRsvpsByInvitation(filtered);
+    else renderRsvpsByGuest(filtered);
+  }
+
+  function renderRsvpsByInvitation(filtered) {
+    $('#rsvp-table-head').innerHTML = `
+      <tr>
+        <th>Invitation</th>
+        <th>Status</th>
+        <th>Guests</th>
+        <th>Submitted</th>
+        <th>Actions</th>
+      </tr>`;
+
+    $('#rsvp-table-body').innerHTML = filtered.map(r => `
+      <tr>
+        <td><strong>${esc(r.invitationName || r.name || '—')}</strong></td>
+        <td>${r.attending
+          ? '<span class="badge badge-attending">Attending</span>'
+          : '<span class="badge badge-declined">Declined</span>'
+        }</td>
+        <td>${r.guestCount || r.attendingCount || (r.guests ? r.guests.length : 1)}</td>
+        <td class="text-sm">${formatDate(r.submittedAt)}</td>
+        <td>
+          <button class="btn btn-danger btn-sm" onclick="window._deleteRsvp('${r.id}','${esc(r.invitationName || r.name || '')}')">Delete</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function renderRsvpsByGuest(filtered) {
+    $('#rsvp-table-head').innerHTML = `
+      <tr>
+        <th>Guest Name</th>
+        <th>Invitation</th>
+        <th>Status</th>
+        <th>Meal</th>
+        <th>Dietary</th>
+        <th>Submitted</th>
+      </tr>`;
+
+    const rows = [];
+    filtered.forEach(r => {
+      if (r.guests && r.guests.length) {
+        r.guests.forEach(g => {
+          rows.push(`
+            <tr>
+              <td>${esc(g.name || '—')}</td>
+              <td class="text-sm">${esc(r.invitationName || r.name || '')}</td>
+              <td>${(g.attending !== undefined ? g.attending : r.attending)
+                ? '<span class="badge badge-attending">Attending</span>'
+                : '<span class="badge badge-declined">Declined</span>'
+              }</td>
+              <td class="text-sm">${esc(g.mealPreference || '—')}</td>
+              <td class="text-sm">${esc(g.dietary || '—')}</td>
+              <td class="text-sm">${formatDate(r.submittedAt)}</td>
+            </tr>
+          `);
+        });
+      } else {
+        rows.push(`
+          <tr>
+            <td>${esc(r.name || r.invitationName || '—')}</td>
+            <td class="text-sm">${esc(r.invitationName || '')}</td>
+            <td>${r.attending
+              ? '<span class="badge badge-attending">Attending</span>'
+              : '<span class="badge badge-declined">Declined</span>'
+            }</td>
+            <td class="text-sm">${esc(r.mealPreference || '—')}</td>
+            <td class="text-sm">${esc(r.dietary || '—')}</td>
+            <td class="text-sm">${formatDate(r.submittedAt)}</td>
+          </tr>
+        `);
+      }
+    });
+
+    $('#rsvp-table-body').innerHTML = rows.join('');
+  }
+
+  $('#rsvp-filter').addEventListener('change', renderRsvps);
+  $('#rsvp-view-mode').addEventListener('change', renderRsvps);
+
+  // Delete RSVP
+  window._deleteRsvp = (id, name) => {
+    pendingDelete = { type: 'rsvp', id, name };
+    $('#delete-message').textContent = `Delete RSVP for "${name}"? This will also reset their guest status.`;
+    openModal('delete-modal');
+  };
+
+  // Export RSVPs to CSV
+  $('#export-rsvps-btn').addEventListener('click', () => {
+    if (!rsvps.length) { toast('No RSVPs to export', 'info'); return; }
+
+    const rows = [['Invitation Name', 'Attending', 'Guest Count', 'Email', 'Phone', 'Meal Preference', 'Dietary', 'Message', 'Submitted']];
+    rsvps.forEach(r => {
+      rows.push([
+        r.invitationName || r.name || '',
+        r.attending ? 'Yes' : 'No',
+        r.guestCount || r.attendingCount || (r.guests ? r.guests.length : 1),
+        r.email || '',
+        r.phone || '',
+        r.mealPreference || '',
+        r.dietary || '',
+        r.message || '',
+        formatDate(r.submittedAt)
+      ]);
+    });
+
+    downloadCSV(rows, 'bivo-rsvps.csv');
+    toast('CSV exported', 'success');
+  });
+
+  // ── SETTINGS ────────────────────────────────────────────────
+  const FORM_FIELDS = [
+    { key: 'phone', label: 'Phone Number' },
+    { key: 'relationship', label: 'Relationship to Couple' },
+    { key: 'mealPreference', label: 'Meal Preference' },
+    { key: 'dietary', label: 'Dietary Restrictions' },
+    { key: 'childrenCount', label: 'Number of Children' },
+    { key: 'songRequest', label: 'Song Request' },
+    { key: 'transportNeeded', label: 'Transport Needed' },
+    { key: 'accommodationNeeded', label: 'Accommodation Needed' },
+    { key: 'specialRequests', label: 'Special Requests' },
+    { key: 'message', label: 'Message to the Couple' }
+  ];
+
+  async function loadSettings() {
+    try {
+      const snap = await getDoc(doc(db, 'settings', 'formConfig'));
+      formConfig = snap.exists() ? snap.data() : { rsvpOpen: true, fields: {} };
+      renderSettings();
+    } catch (err) {
+      toast('Failed to load settings: ' + err.message, 'error');
+    }
+  }
+
+  function renderSettings() {
+    $('#toggle-rsvpOpen').checked = formConfig.rsvpOpen !== false;
+
+    const container = $('#field-toggles');
+    container.innerHTML = FORM_FIELDS.map(f => {
+      const checked = formConfig.fields ? formConfig.fields[f.key] !== false : true;
+      return `
+        <div class="toggle-row">
+          <span class="toggle-label">${f.label}</span>
+          <label class="toggle">
+            <input type="checkbox" data-field="${f.key}" ${checked ? 'checked' : ''} />
+            <span class="slider"></span>
+          </label>
+        </div>
+      `;
+    }).join('');
+  }
+
+  $('#save-settings-btn').addEventListener('click', async () => {
+    const fields = {};
+    $$('#field-toggles input[data-field]').forEach(inp => {
+      fields[inp.dataset.field] = inp.checked;
+    });
+
+    const data = {
+      rsvpOpen: $('#toggle-rsvpOpen').checked,
+      fields,
+      updatedAt: Timestamp.now()
+    };
+
+    try {
+      await setDoc(doc(db, 'settings', 'formConfig'), data);
+      formConfig = data;
+      toast('Settings saved', 'success');
+    } catch (err) {
+      toast('Error saving settings: ' + err.message, 'error');
+    }
+  });
+
+  // ── ANALYTICS ───────────────────────────────────────────────
+  function renderAnalytics() {
+    // Stats
+    const totalInvitations = guests.length;
+    const totalIndividuals = guests.reduce((s, g) => s + (g.members ? g.members.length : 0), 0);
+    const totalRsvps = rsvps.length;
+    const attending = rsvps.filter(r => r.attending);
+    const declined = rsvps.filter(r => !r.attending);
+    const headcount = attending.reduce((s, r) => s + (r.guestCount || r.attendingCount || 1), 0);
+    const responseRate = totalInvitations ? ((totalRsvps / totalInvitations) * 100).toFixed(1) : 0;
+    const attendanceRate = totalRsvps ? ((attending.length / totalRsvps) * 100).toFixed(1) : 0;
+    const pending = totalInvitations - totalRsvps;
+
+    $('#analytics-stats').innerHTML = `
+      <div class="stat-card"><div class="stat-value">${totalInvitations}</div><div class="stat-label">Invitations</div></div>
+      <div class="stat-card"><div class="stat-value">${totalIndividuals}</div><div class="stat-label">Individuals</div></div>
+      <div class="stat-card"><div class="stat-value">${responseRate}%</div><div class="stat-label">Response Rate</div></div>
+      <div class="stat-card"><div class="stat-value">${attendanceRate}%</div><div class="stat-label">Attendance Rate</div></div>
+      <div class="stat-card"><div class="stat-value">${headcount}</div><div class="stat-label">Headcount</div></div>
+      <div class="stat-card"><div class="stat-value">${declined.length}</div><div class="stat-label">Declined</div></div>
+      <div class="stat-card"><div class="stat-value">${pending > 0 ? pending : 0}</div><div class="stat-label">Pending</div></div>
+    `;
+
+    // Destroy old charts
+    Object.values(charts).forEach(c => c.destroy());
+    charts = {};
+
+    const chartColors = {
+      sage: '#8faa8c',
+      sageBg: 'rgba(143,170,140,0.2)',
+      hydrangea: '#7ba7c2',
+      hydrangeaBg: 'rgba(123,167,194,0.2)',
+      gold: '#d4b96a',
+      goldBg: 'rgba(212,185,106,0.2)',
+      danger: '#c27b7b',
+      dangerBg: 'rgba(194,123,123,0.2)',
+      cream: '#e6d49a'
+    };
+
+    Chart.defaults.font.family = "'Josefin Sans', sans-serif";
+    Chart.defaults.color = '#7a8a77';
+
+    // Timeline chart
+    const timelineData = buildTimeline();
+    charts.timeline = new Chart($('#chart-timeline'), {
+      type: 'line',
+      data: {
+        labels: timelineData.labels,
+        datasets: [{
+          label: 'Cumulative RSVPs',
+          data: timelineData.values,
+          borderColor: chartColors.sage,
+          backgroundColor: chartColors.sageBg,
+          fill: true,
+          tension: 0.4,
+          pointRadius: 3,
+          pointBackgroundColor: chartColors.sage
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+      }
+    });
+
+    // Attendance doughnut
+    charts.attendance = new Chart($('#chart-attendance'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Attending', 'Declined', 'Pending'],
+        datasets: [{
+          data: [attending.length, declined.length, pending > 0 ? pending : 0],
+          backgroundColor: [chartColors.sage, chartColors.danger, chartColors.gold],
+          borderWidth: 0,
+          hoverOffset: 8
+        }]
+      },
+      options: {
+        responsive: true,
+        cutout: '60%',
+        plugins: { legend: { position: 'bottom' } }
+      }
+    });
+
+    // Meal preferences pie
+    const mealCounts = {};
+    rsvps.forEach(r => {
+      if (r.guests && r.guests.length) {
+        r.guests.forEach(g => {
+          if (g.mealPreference) mealCounts[g.mealPreference] = (mealCounts[g.mealPreference] || 0) + 1;
+        });
+      } else if (r.mealPreference) {
+        mealCounts[r.mealPreference] = (mealCounts[r.mealPreference] || 0) + 1;
+      }
+    });
+
+    const mealLabels = Object.keys(mealCounts);
+    const mealColors = mealLabels.map((_, i) => {
+      const palette = [chartColors.sage, chartColors.hydrangea, chartColors.gold, chartColors.danger, chartColors.cream, '#b5cdb3', '#a7cce0'];
+      return palette[i % palette.length];
+    });
+
+    charts.meals = new Chart($('#chart-meals'), {
+      type: 'pie',
+      data: {
+        labels: mealLabels.length ? mealLabels : ['No data'],
+        datasets: [{
+          data: mealLabels.length ? mealLabels.map(l => mealCounts[l]) : [1],
+          backgroundColor: mealLabels.length ? mealColors : ['#ddd'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom' } }
+      }
+    });
+
+    // Family size distribution bar
+    const sizeCounts = {};
+    rsvps.filter(r => r.attending).forEach(r => {
+      const size = r.guestCount || r.attendingCount || (r.guests ? r.guests.length : 1);
+      sizeCounts[size] = (sizeCounts[size] || 0) + 1;
+    });
+
+    const sizeLabels = Object.keys(sizeCounts).sort((a, b) => a - b);
+
+    charts.family = new Chart($('#chart-family'), {
+      type: 'bar',
+      data: {
+        labels: sizeLabels.length ? sizeLabels.map(s => `${s} guest${s > 1 ? 's' : ''}`) : ['No data'],
+        datasets: [{
+          label: 'Families',
+          data: sizeLabels.length ? sizeLabels.map(s => sizeCounts[s]) : [0],
+          backgroundColor: chartColors.hydrangeaBg,
+          borderColor: chartColors.hydrangea,
+          borderWidth: 1.5,
+          borderRadius: 8
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+      }
+    });
+  }
+
+  function buildTimeline() {
+    const sorted = [...rsvps]
+      .filter(r => r.submittedAt)
+      .sort((a, b) => toMs(a.submittedAt) - toMs(b.submittedAt));
+
+    if (!sorted.length) return { labels: [], values: [] };
+
+    const dateMap = {};
+    sorted.forEach((r, i) => {
+      const d = new Date(toMs(r.submittedAt));
+      const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      dateMap[key] = i + 1;
+    });
+
+    const labels = Object.keys(dateMap);
+    const values = Object.values(dateMap);
+    return { labels, values };
+  }
+
+  // ── EMAIL ───────────────────────────────────────────────────
+  function renderRecipients() {
+    const filter = $('#email-filter').value;
+    let list = guests.filter(g => g.email);
+
+    if (filter === 'attending') list = list.filter(g => rsvps.some(r => (r.invitationName === g.invitationName || r.guestId === g.id) && r.attending));
+    if (filter === 'declined') list = list.filter(g => rsvps.some(r => (r.invitationName === g.invitationName || r.guestId === g.id) && !r.attending));
+    if (filter === 'pending') list = list.filter(g => !g.hasRsvped);
+
+    const container = $('#recipient-list');
+    container.innerHTML = list.map(g => `
+      <div class="recipient-item">
+        <input type="checkbox" checked data-email="${esc(g.email)}" data-name="${esc(g.invitationName)}" />
+        <span>${esc(g.invitationName)} <span class="text-muted">(${esc(g.email)})</span></span>
+      </div>
+    `).join('') + customRecipients.map(email => `
+      <div class="recipient-item">
+        <input type="checkbox" checked data-email="${esc(email)}" data-name="Custom" />
+        <span>${esc(email)} <span class="text-muted">(custom)</span></span>
+      </div>
+    `).join('');
+
+    updateRecipientCount();
+  }
+
+  function updateRecipientCount() {
+    const checked = $$('#recipient-list input[type="checkbox"]:checked').length;
+    $('#recipient-count').textContent = `${checked} recipient(s) selected`;
+  }
+
+  $('#recipient-list').addEventListener('change', updateRecipientCount);
+  $('#email-filter').addEventListener('change', renderRecipients);
+
+  $('#email-select-all').addEventListener('click', () => {
+    $$('#recipient-list input[type="checkbox"]').forEach(cb => cb.checked = true);
+    updateRecipientCount();
+  });
+
+  $('#email-deselect-all').addEventListener('click', () => {
+    $$('#recipient-list input[type="checkbox"]').forEach(cb => cb.checked = false);
+    updateRecipientCount();
+  });
+
+  $('#add-custom-recipient').addEventListener('click', () => {
+    const email = $('#custom-recipient').value.trim();
+    if (!email || !email.includes('@')) { toast('Enter a valid email', 'error'); return; }
+    if (customRecipients.includes(email)) { toast('Already added', 'info'); return; }
+    customRecipients.push(email);
+    $('#custom-recipient').value = '';
+    renderRecipients();
+    toast('Custom recipient added', 'success');
+  });
+
+  $('#send-email-btn').addEventListener('click', async () => {
+    const subject = $('#email-subject').value.trim();
+    const body = $('#email-body').value.trim();
+    if (!subject || !body) { toast('Subject and message are required', 'error'); return; }
+
+    const recipients = [];
+    $$('#recipient-list input[type="checkbox"]:checked').forEach(cb => {
+      recipients.push({ email: cb.dataset.email, name: cb.dataset.name });
+    });
+
+    if (!recipients.length) { toast('Select at least one recipient', 'error'); return; }
+
+    const btn = $('#send-email-btn');
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+
+    try {
+      const token = await auth.currentUser.getIdToken();
+      const res = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          recipients,
+          subject,
+          html: body,
+          from: 'info@binovivo.ca'
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        toast(`Email sent to ${recipients.length} recipient(s)`, 'success');
+      } else {
+        toast('Send failed: ' + (data.error || 'Unknown error'), 'error');
+      }
+    } catch (err) {
+      toast('Send failed: ' + err.message, 'error');
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Send Email';
+  });
+
+  // ── DELETE HANDLER ──────────────────────────────────────────
+  $('#delete-confirm').addEventListener('click', async () => {
+    if (!pendingDelete) return;
+    const btn = $('#delete-confirm');
+    btn.disabled = true;
+    btn.textContent = 'Deleting...';
+
+    try {
+      if (pendingDelete.type === 'guest') {
+        await deleteDoc(doc(db, 'guests', pendingDelete.id));
+        toast('Guest deleted', 'success');
+        await loadGuests();
+      } else if (pendingDelete.type === 'rsvp') {
+        // Find matching guest and reset hasRsvped
+        const rsvp = rsvps.find(r => r.id === pendingDelete.id);
+        if (rsvp) {
+          const matchingGuest = guests.find(g =>
+            g.invitationName === (rsvp.invitationName || rsvp.name) || g.id === rsvp.guestId
+          );
+          if (matchingGuest) {
+            await updateDoc(doc(db, 'guests', matchingGuest.id), { hasRsvped: false });
+          }
+        }
+        await deleteDoc(doc(db, 'rsvps', pendingDelete.id));
+        toast('RSVP deleted', 'success');
+        await Promise.all([loadRsvps(), loadGuests()]);
+      }
+    } catch (err) {
+      toast('Delete failed: ' + err.message, 'error');
+    }
+
+    closeModal('delete-modal');
+    pendingDelete = null;
+    btn.disabled = false;
+    btn.textContent = 'Delete';
+  });
+
+  // ── MODAL HELPERS ───────────────────────────────────────────
+  function openModal(id) { $(`#${id}`).classList.add('open'); }
+  function closeModal(id) { $(`#${id}`).classList.remove('open'); }
+
+  // Close buttons
+  $('#guest-modal-close').addEventListener('click', () => closeModal('guest-modal'));
+  $('#guest-modal-cancel').addEventListener('click', () => closeModal('guest-modal'));
+  $('#import-modal-close').addEventListener('click', () => closeModal('import-modal'));
+  $('#import-modal-cancel').addEventListener('click', () => closeModal('import-modal'));
+  $('#delete-modal-close').addEventListener('click', () => closeModal('delete-modal'));
+  $('#delete-cancel').addEventListener('click', () => closeModal('delete-modal'));
+
+  // Click overlay to close
+  $$('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) overlay.classList.remove('open');
+    });
+  });
+
+  // Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') $$('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+  });
+
+  // ── UTILITIES ───────────────────────────────────────────────
+  function esc(str) {
+    const div = document.createElement('div');
+    div.textContent = str || '';
+    return div.innerHTML;
+  }
+
+  function formatDate(ts) {
+    if (!ts) return '—';
+    const ms = toMs(ts);
+    return new Date(ms).toLocaleDateString('en-CA', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+
+  function toMs(ts) {
+    if (!ts) return 0;
+    if (ts.seconds) return ts.seconds * 1000;
+    if (ts.toMillis) return ts.toMillis();
+    if (typeof ts === 'number') return ts;
+    return new Date(ts).getTime();
+  }
+
+  function downloadCSV(rows, filename) {
+    const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+</script>
+</body>
+</html>

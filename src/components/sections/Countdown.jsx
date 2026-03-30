@@ -246,7 +246,7 @@ export default function Countdown() {
           zIndex: 2,
         }}
       >
-        September 20, 2026
+        August 30, 2026
       </motion.p>
     </section>
   );

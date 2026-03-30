@@ -337,7 +337,7 @@ export default function Hero() {
         </motion.div>
 
         {/* date badge */}
-        <DateBadge>September 20, 2026</DateBadge>
+        <DateBadge>August 30, 2026</DateBadge>
 
         {/* scroll hint */}
         <motion.div

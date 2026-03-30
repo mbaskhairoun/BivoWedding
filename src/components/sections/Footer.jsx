@@ -174,7 +174,7 @@ export default function Footer() {
           viewport={{ once: true }}
           transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
         >
-          September 20, 2026 &hearts; With love and joy
+          August 30, 2026 &hearts; With love and joy
         </motion.p>
 
         {/* Hydrangea ornament */}

@@ -110,7 +110,7 @@ export default function Hero() {
             letterSpacing: '0.06em',
           }}
         >
-          Vaughan, Ontario
+          Oakville &middot; Vaughan
         </motion.p>
       </div>
     </section>

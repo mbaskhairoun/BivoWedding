@@ -3,16 +3,16 @@ import { motion } from 'framer-motion';
 
 const items = [
   {
-    title: 'Venue',
-    body: 'Ascott Parc Event Centre\n2839 Rutherford Road\nVaughan, Ontario L4K 2N7',
+    title: 'Ceremony',
+    body: '2:00 PM\nSt. Peter & St. Paul\nCoptic Orthodox Church\n1177 Invicta Drive\nOakville, Ontario',
+  },
+  {
+    title: 'Reception',
+    body: '6:00 PM\nAscott Parc Event Centre\n2839 Rutherford Road\nVaughan, Ontario',
   },
   {
     title: 'Attire',
     body: 'Garden formal.\nPale neutrals & soft florals\nencouraged.',
-  },
-  {
-    title: 'Travel',
-    body: 'A shuttle will run between\nthe Garden Inn and the venue\nthroughout the evening.',
   },
 ];
 

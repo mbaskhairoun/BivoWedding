@@ -41,7 +41,7 @@ export default function Footer() {
             color: 'var(--muted)',
           }}
         >
-          30 · 08 · 2026 &middot; Vaughan
+          30 · 08 · 2026 &middot; Oakville &middot; Vaughan
         </p>
 
         <p

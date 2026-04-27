@@ -10,8 +10,14 @@ export default function GateIntro({ onComplete }) {
   useEffect(() => {
     const original = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+
+    // Fallback: enable tap after 2.5s even if no canplay/loadeddata event fires
+    // (iOS Safari often won't preload past metadata for a paused video)
+    const readyTimer = window.setTimeout(() => setCanPlay(true), 2500);
+
     return () => {
       document.body.style.overflow = original;
+      window.clearTimeout(readyTimer);
     };
   }, []);
 
@@ -60,9 +66,11 @@ export default function GateIntro({ onComplete }) {
             playsInline
             preload="auto"
             muted
-            onCanPlay={() => setCanPlay(true)}
+            onLoadedMetadata={() => setCanPlay(true)}
             onLoadedData={() => setCanPlay(true)}
+            onCanPlay={() => setCanPlay(true)}
             onEnded={handleEnded}
+            onError={finish}
             style={{
               filter: phase === 'finishing' ? 'brightness(1.15)' : 'brightness(1)',
               transition: 'filter 1s ease-out',
@@ -85,7 +93,6 @@ export default function GateIntro({ onComplete }) {
                 key="enter"
                 type="button"
                 onClick={handleEnter}
-                disabled={!canPlay}
                 className="absolute inset-0 w-full h-full flex flex-col items-center justify-start cursor-pointer gap-7"
                 style={{ paddingTop: 'clamp(3rem, 9vh, 7rem)', paddingBottom: 'clamp(2.5rem, 7vh, 5.5rem)' }}
                 initial={{ opacity: 0 }}

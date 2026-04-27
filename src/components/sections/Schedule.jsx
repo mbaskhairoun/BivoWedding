@@ -2,9 +2,16 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 const events = [
-  { time: '3:00 PM', title: 'Ceremony', note: 'Please be seated by 2:45' },
-  { time: '4:00 PM', title: 'Cocktail Hour', note: 'Drinks & garden views' },
-  { time: '5:30 PM', title: 'Reception', note: 'Dinner, toasts & dancing' },
+  {
+    time: '2:00 PM',
+    title: 'Ceremony',
+    note: 'St. Peter & St. Paul Coptic Orthodox\nOakville',
+  },
+  {
+    time: '6:00 PM',
+    title: 'Reception',
+    note: 'Ascott Parc Event Centre\nVaughan',
+  },
 ];
 
 export default function Schedule() {
@@ -75,11 +82,13 @@ export default function Schedule() {
               </p>
               <p
                 style={{
-                  marginTop: '0.2rem',
+                  marginTop: '0.4rem',
                   fontFamily: "'Cormorant Garamond', serif",
                   fontStyle: 'italic',
                   fontSize: 'clamp(0.9rem, 1.4vw, 1.02rem)',
                   color: 'var(--muted)',
+                  whiteSpace: 'pre-line',
+                  lineHeight: 1.5,
                 }}
               >
                 {e.note}

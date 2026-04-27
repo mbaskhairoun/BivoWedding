@@ -5,6 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import Navigation from './components/layout/Navigation';
 import Hero from './components/sections/Hero';
+import Countdown from './components/sections/Countdown';
 import OurDay from './components/sections/OurDay';
 import Schedule from './components/sections/Schedule';
 import Details from './components/sections/Details';
@@ -45,6 +46,7 @@ function App() {
 
       <main>
         <Hero />
+        <Countdown />
         <OurDay />
         <Schedule />
         <Details />

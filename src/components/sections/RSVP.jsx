@@ -12,19 +12,16 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 import { db } from '../../firebase';
-import ParallaxPainting from '../effects/ParallaxPainting';
-import CursiveHeading from '../ui/CursiveHeading';
-
-/* ──────────────── palette ──────────────── */
+/* ──────────────── palette (Mar & Jaume style) ──────────────── */
 const C = {
-  sage: '#8faa8c',
-  hydrangea: '#7ba7c2',
-  cream: '#fdf9f0',
-  ivory: '#faf6eb',
-  goldPale: '#f0e4bf',
-  text: '#4a5a47',
-  textLight: '#6d7d6a',
-  error: '#c97a7a',
+  sage: '#878f6b',       // primary sage olive
+  hydrangea: '#5e624e',  // accent (was hydrangea — repurposed to deep sage)
+  cream: '#f1ead3',      // ivory paper bg
+  ivory: '#ebe1c8',      // slightly darker paper / cards
+  goldPale: '#ddd1a7',   // soft gold tint
+  text: '#34453a',       // forest green text
+  textLight: '#6d7d6a',  // muted text
+  error: '#a85e5e',
 };
 
 /* ──────────────── Levenshtein distance ──────────────── */
@@ -614,7 +611,17 @@ export default function RSVP() {
       <section id="rsvp" style={styles.section}>
         <div style={styles.gradientLayer} />
         <div style={styles.content}>
-          <CursiveHeading text="RSVP" subtitle="We hope you can make it" />
+          <div style={{ textAlign: 'center', marginBottom: 'clamp(2rem, 4vw, 3rem)' }}>
+            <p style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: 'clamp(0.75rem, 1.3vw, 0.9rem)', letterSpacing: '0.42em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '0.9rem' }}>
+              Kindly respond
+            </p>
+            <h2 style={{ fontFamily: "'Pinyon Script', cursive", fontStyle: 'normal', fontWeight: 400, fontSize: 'clamp(2.6rem, 6vw, 4.5rem)', lineHeight: 1.05, color: 'var(--forest)' }}>
+              RSVP
+            </h2>
+            <p style={{ marginTop: '0.7rem', fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: 'clamp(0.95rem, 1.5vw, 1.08rem)', color: 'var(--muted)' }}>
+              We hope you can make it
+            </p>
+          </div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -637,26 +644,19 @@ export default function RSVP() {
       {/* watercolor gradient background */}
       <div style={styles.gradientLayer} />
 
-      {/* left parallax painting */}
-      <ParallaxPainting
-        src="/inspo/WhatsApp Image 2026-03-29 at 7.05.49 PM.jpeg"
-        speed={0.25}
-        rotation={-3}
-        style={{
-          left: '-4%',
-          top: '6%',
-          width: 'clamp(200px, 30vw, 440px)',
-          opacity: 0.2,
-          borderRadius: '50% 40% 55% 45% / 45% 55% 40% 50%',
-          maskImage: 'radial-gradient(ellipse 80% 80% at 50% 50%, black 35%, transparent 72%)',
-          WebkitMaskImage: 'radial-gradient(ellipse 80% 80% at 50% 50%, black 35%, transparent 72%)',
-          filter: 'saturate(0.7) brightness(1.1)',
-        }}
-      />
-
       {/* content */}
       <div style={styles.content}>
-        <CursiveHeading text="RSVP" subtitle="We hope you can make it" />
+        <div style={{ textAlign: 'center', marginBottom: 'clamp(2rem, 4vw, 3rem)' }}>
+            <p style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: 'clamp(0.75rem, 1.3vw, 0.9rem)', letterSpacing: '0.42em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '0.9rem' }}>
+              Kindly respond
+            </p>
+            <h2 style={{ fontFamily: "'Pinyon Script', cursive", fontStyle: 'normal', fontWeight: 400, fontSize: 'clamp(2.6rem, 6vw, 4.5rem)', lineHeight: 1.05, color: 'var(--forest)' }}>
+              RSVP
+            </h2>
+            <p style={{ marginTop: '0.7rem', fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: 'clamp(0.95rem, 1.5vw, 1.08rem)', color: 'var(--muted)' }}>
+              We hope you can make it
+            </p>
+          </div>
 
         <motion.p
           initial={{ opacity: 0, y: 16 }}

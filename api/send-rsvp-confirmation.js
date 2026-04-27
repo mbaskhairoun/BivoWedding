@@ -9,8 +9,8 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const WEDDING_DATE = "August 30, 2026";
 const WEDDING_TIME = "3:00 PM";
 const WEDDING_END_TIME = "11:00 PM";
-const WEDDING_VENUE = "The Botanical Garden Estate";
-const WEDDING_ADDRESS = "123 Garden Lane";
+const WEDDING_VENUE = "Ascott Parc Event Centre";
+const WEDDING_ADDRESS = "2839 Rutherford Road, Vaughan, ON L4K 2N7";
 const DRESS_CODE = "Garden Formal";
 
 const GOOGLE_CAL_URL =
@@ -18,7 +18,7 @@ const GOOGLE_CAL_URL =
   "&text=Bino+%26+Vivo%27s+Wedding" +
   "&dates=20260830T190000Z/20260831T030000Z" +
   "&details=Join+us+for+the+wedding+celebration+of+Bino+%26+Vivo" +
-  "&location=The+Botanical+Garden+Estate%2C+123+Garden+Lane" +
+  "&location=Ascott+Parc+Event+Centre%2C+2839+Rutherford+Road%2C+Vaughan%2C+ON+L4K+2N7" +
   "&sf=true&output=xml";
 
 const ICS_CONTENT = [
@@ -49,7 +49,7 @@ const ICS_CONTENT = [
   "DTEND;TZID=America/Toronto:20260830T230000",
   "SUMMARY:Bino & Vivo's Wedding",
   "DESCRIPTION:Join us for the wedding celebration of Bino & Vivo",
-  "LOCATION:The Botanical Garden Estate\\, 123 Garden Lane",
+  "LOCATION:Ascott Parc Event Centre\\, 2839 Rutherford Road\\, Vaughan\\, ON L4K 2N7",
   "STATUS:CONFIRMED",
   "SEQUENCE:0",
   "END:VEVENT",

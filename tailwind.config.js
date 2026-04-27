@@ -4,17 +4,16 @@ export default {
   theme: {
     extend: {
       colors: {
-        sage: { DEFAULT: '#8faa8c', light: '#b5ccb2', pale: '#dfe9dc' },
-        hydrangea: { DEFAULT: '#7ba7c2', light: '#a8cfe0', pale: '#d6eaf5' },
-        cream: '#fdf9f0',
-        ivory: '#faf6eb',
-        gold: { soft: '#d4b96a', pale: '#f0e4bf' },
-        txt: { DEFAULT: '#4a5a47', light: '#6d7d6a' },
+        ivory: '#fbf9f3',
+        paper: '#f4f0e4',
+        sage: { DEFAULT: '#8a9377', dark: '#5e624e' },
+        forest: '#34453a',
+        muted: '#7a8474',
+        gold: '#c4a875',
       },
       fontFamily: {
-        cursive: ['Pinyon Script', 'Great Vibes', 'cursive'],
-        serif: ['Cormorant Garamond', 'serif'],
-        sans: ['Josefin Sans', 'sans-serif'],
+        cursive: ['"Pinyon Script"', '"Great Vibes"', 'cursive'],
+        serif: ['"Cormorant Garamond"', 'serif'],
       },
     },
   },

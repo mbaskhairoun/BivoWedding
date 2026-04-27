@@ -1,70 +1,56 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-// Section components
 import Navigation from './components/layout/Navigation';
 import Hero from './components/sections/Hero';
-import OurStory from './components/sections/OurStory';
-import Countdown from './components/sections/Countdown';
-import Celebration from './components/sections/Celebration';
-import Gallery from './components/sections/Gallery';
+import OurDay from './components/sections/OurDay';
+import Schedule from './components/sections/Schedule';
+import Details from './components/sections/Details';
 import RSVP from './components/sections/RSVP';
-import TravelStay from './components/sections/TravelStay';
-import Registry from './components/sections/Registry';
 import Footer from './components/sections/Footer';
 
-// Effects
-import PetalParticles from './components/effects/PetalParticles';
-import CursorTrail from './components/effects/CursorTrail';
-
-// Layout
-import WashDivider from './components/layout/WashDivider';
+import GateIntro from './components/intro/GateIntro';
 
 gsap.registerPlugin(ScrollTrigger);
 
 function App() {
-  useEffect(() => {
-    const lenis = new Lenis({ lerp: 0.07, smoothWheel: true });
+  const [introDone, setIntroDone] = useState(false);
 
+  useEffect(() => {
+    if (!introDone) return;
+
+    const lenis = new Lenis({ lerp: 0.07, smoothWheel: true });
     lenis.on('scroll', ScrollTrigger.update);
 
     const rafCallback = (time) => lenis.raf(time * 1000);
     gsap.ticker.add(rafCallback);
     gsap.ticker.lagSmoothing(0);
 
+    window.scrollTo(0, 0);
+    ScrollTrigger.refresh();
+
     return () => {
       lenis.destroy();
       gsap.ticker.remove(rafCallback);
     };
-  }, []);
+  }, [introDone]);
 
   return (
     <>
+      {!introDone && <GateIntro onComplete={() => setIntroDone(true)} />}
+
       <Navigation />
 
       <main>
         <Hero />
-        <WashDivider variant={1} />
-        <OurStory />
-        <WashDivider variant={2} />
-        <Countdown />
-        <WashDivider variant={3} />
-        <Celebration />
-        <WashDivider variant={4} />
-        <Gallery />
-        <WashDivider variant={5} />
+        <OurDay />
+        <Schedule />
+        <Details />
         <RSVP />
-        <WashDivider variant={1} />
-        <TravelStay />
-        <WashDivider variant={2} />
-        <Registry />
         <Footer />
       </main>
-
-      <PetalParticles />
-      <CursorTrail />
     </>
   );
 }

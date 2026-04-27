@@ -71,7 +71,7 @@ export default function Hero() {
             fontStyle: 'normal',
             fontSize: 'clamp(4rem, 11vw, 8rem)',
             lineHeight: 1.05,
-            color: '#fbf9f3',
+            color: '#f3e6c1',
             letterSpacing: '-0.005em',
             textShadow:
               '0 4px 30px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4)',
@@ -88,44 +88,33 @@ export default function Hero() {
             fontFamily: "'Cormorant Garamond', serif",
             fontStyle: 'italic',
             fontWeight: 400,
-            fontSize: 'clamp(0.85rem, 1.5vw, 1.05rem)',
-            letterSpacing: '0.42em',
+            fontSize: 'clamp(1.05rem, 1.9vw, 1.3rem)',
+            letterSpacing: '0.4em',
             textTransform: 'uppercase',
-            color: 'rgba(251, 249, 243, 0.88)',
+            color: 'rgba(243, 230, 193, 0.92)',
             textShadow: '0 2px 14px rgba(0,0,0,0.6)',
           }}
         >
           are getting married
         </motion.p>
 
-        <motion.div
+        <motion.p
           {...fadeUp}
           transition={{ duration: 1, delay: 0.85, ease: 'easeOut' }}
           style={{
             marginTop: 'clamp(1.6rem, 3vh, 2.2rem)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1.2rem',
+            fontFamily: "'Cormorant Garamond', serif",
+            fontStyle: 'italic',
+            fontWeight: 400,
+            fontSize: 'clamp(0.95rem, 1.7vw, 1.15rem)',
+            letterSpacing: '0.3em',
+            color: 'rgba(243, 230, 193, 0.95)',
+            whiteSpace: 'nowrap',
+            textShadow: '0 2px 14px rgba(0,0,0,0.6)',
           }}
         >
-          <Flourish />
-          <p
-            style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              fontStyle: 'italic',
-              fontWeight: 400,
-              fontSize: 'clamp(0.92rem, 1.6vw, 1.1rem)',
-              letterSpacing: '0.32em',
-              textTransform: 'uppercase',
-              color: 'rgba(251, 249, 243, 0.94)',
-              whiteSpace: 'nowrap',
-              textShadow: '0 2px 14px rgba(0,0,0,0.6)',
-            }}
-          >
-            30 · 08 · 2026
-          </p>
-          <Flourish flip />
-        </motion.div>
+          08.30.2026
+        </motion.p>
 
         <motion.p
           {...fadeUp}
@@ -136,7 +125,7 @@ export default function Hero() {
             fontStyle: 'italic',
             fontWeight: 400,
             fontSize: 'clamp(0.9rem, 1.4vw, 1.05rem)',
-            color: 'rgba(251, 249, 243, 0.78)',
+            color: 'rgba(243, 230, 193, 0.78)',
             letterSpacing: '0.06em',
             textShadow: '0 2px 14px rgba(0,0,0,0.55)',
           }}
@@ -148,24 +137,3 @@ export default function Hero() {
   );
 }
 
-function Flourish({ flip = false }) {
-  return (
-    <svg
-      width="64"
-      height="10"
-      viewBox="0 0 64 10"
-      fill="none"
-      style={{ transform: flip ? 'scaleX(-1)' : 'none', flex: 'none' }}
-      aria-hidden="true"
-    >
-      <path
-        d="M2 5 Q 14 1 28 5 T 54 5"
-        stroke="rgba(228, 200, 145, 0.85)"
-        strokeWidth="0.9"
-        strokeLinecap="round"
-        fill="none"
-      />
-      <circle cx="58" cy="5" r="1.6" fill="rgba(228, 200, 145, 0.9)" />
-    </svg>
-  );
-}

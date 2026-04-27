@@ -7,6 +7,7 @@ import Navigation from './components/layout/Navigation';
 import Hero from './components/sections/Hero';
 import Countdown from './components/sections/Countdown';
 import OurDay from './components/sections/OurDay';
+import Photos from './components/sections/Photos';
 import Schedule from './components/sections/Schedule';
 import Details from './components/sections/Details';
 import RSVP from './components/sections/RSVP';
@@ -48,6 +49,7 @@ function App() {
         <Hero />
         <Countdown />
         <OurDay />
+        <Photos />
         <Schedule />
         <Details />
         <RSVP />

@@ -35,7 +35,7 @@ export default function Footer() {
           style={{
             fontFamily: "'Cormorant Garamond', serif",
             fontStyle: 'italic',
-            fontSize: 'clamp(0.78rem, 1.3vw, 0.92rem)',
+            fontSize: 'clamp(0.9rem, 1.5vw, 1.05rem)',
             letterSpacing: '0.42em',
             textTransform: 'uppercase',
             color: 'var(--muted)',
@@ -49,9 +49,9 @@ export default function Footer() {
             marginTop: '0.5rem',
             fontFamily: "'Cormorant Garamond', serif",
             fontStyle: 'italic',
-            fontSize: '0.82rem',
+            fontSize: 'clamp(0.92rem, 1.4vw, 1rem)',
             color: 'var(--muted)',
-            opacity: 0.6,
+            opacity: 0.7,
             letterSpacing: '0.08em',
           }}
         >

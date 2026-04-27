@@ -60,7 +60,7 @@ export default function Schedule() {
                 style={{
                   fontFamily: "'Cormorant Garamond', serif",
                   fontStyle: 'italic',
-                  fontSize: 'clamp(0.75rem, 1.3vw, 0.88rem)',
+                  fontSize: 'clamp(0.9rem, 1.5vw, 1.05rem)',
                   letterSpacing: '0.42em',
                   textTransform: 'uppercase',
                   color: 'var(--sage-dark)',
@@ -73,7 +73,7 @@ export default function Schedule() {
                   marginTop: '0.4rem',
                   fontFamily: "'Pinyon Script', cursive",
                   fontStyle: 'normal',
-                  fontSize: 'clamp(1.7rem, 3.5vw, 2.3rem)',
+                  fontSize: 'clamp(2.1rem, 4.2vw, 2.8rem)',
                   lineHeight: 1.1,
                   color: 'var(--forest)',
                 }}
@@ -82,10 +82,10 @@ export default function Schedule() {
               </p>
               <p
                 style={{
-                  marginTop: '0.4rem',
+                  marginTop: '0.5rem',
                   fontFamily: "'Cormorant Garamond', serif",
                   fontStyle: 'italic',
-                  fontSize: 'clamp(0.9rem, 1.4vw, 1.02rem)',
+                  fontSize: 'clamp(1.1rem, 1.6vw, 1.22rem)',
                   color: 'var(--muted)',
                   whiteSpace: 'pre-line',
                   lineHeight: 1.5,
@@ -110,7 +110,7 @@ const labelStyle = {
   fontFamily: "'Cormorant Garamond', serif",
   fontStyle: 'italic',
   fontWeight: 400,
-  fontSize: 'clamp(0.75rem, 1.3vw, 0.9rem)',
+  fontSize: 'clamp(0.9rem, 1.5vw, 1.05rem)',
   letterSpacing: '0.42em',
   textTransform: 'uppercase',
   color: 'var(--muted)',

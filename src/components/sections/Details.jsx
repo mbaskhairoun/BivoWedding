@@ -70,7 +70,7 @@ export default function Details() {
                 style={{
                   fontFamily: "'Cormorant Garamond', serif",
                   fontStyle: 'italic',
-                  fontSize: 'clamp(0.75rem, 1.3vw, 0.88rem)',
+                  fontSize: 'clamp(0.9rem, 1.5vw, 1.05rem)',
                   letterSpacing: '0.42em',
                   textTransform: 'uppercase',
                   color: 'var(--sage-dark)',
@@ -83,11 +83,11 @@ export default function Details() {
                 style={{
                   fontFamily: "'Cormorant Garamond', serif",
                   fontStyle: 'italic',
-                  fontSize: 'clamp(0.95rem, 1.45vw, 1.1rem)',
+                  fontSize: 'clamp(1.15rem, 1.7vw, 1.3rem)',
                   lineHeight: 1.85,
                   color: 'var(--forest)',
                   whiteSpace: 'pre-line',
-                  opacity: 0.88,
+                  opacity: 0.9,
                 }}
               >
                 {item.body}
@@ -104,7 +104,7 @@ const labelStyle = {
   fontFamily: "'Cormorant Garamond', serif",
   fontStyle: 'italic',
   fontWeight: 400,
-  fontSize: 'clamp(0.75rem, 1.3vw, 0.9rem)',
+  fontSize: 'clamp(0.9rem, 1.5vw, 1.05rem)',
   letterSpacing: '0.42em',
   textTransform: 'uppercase',
   color: 'var(--muted)',

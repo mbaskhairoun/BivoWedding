@@ -62,6 +62,7 @@ export default function GateIntro({ onComplete }) {
           <video
             ref={videoRef}
             src="/intro.mp4"
+            poster="/intro-poster.jpg"
             className="absolute inset-0 w-full h-full object-cover"
             playsInline
             preload="auto"

@@ -11,8 +11,7 @@ const WEDDING_END_TIME = "11:00 PM";
 const CEREMONY_TIME = "2:00 PM";
 const CEREMONY_VENUE = "St. Peter & St. Paul Coptic Orthodox Church";
 const CEREMONY_ADDRESS = "1177 Invicta Drive, Oakville, ON L6H 4M1";
-const COCKTAIL_TIME = "6:00 PM";
-const RECEPTION_TIME = "7:00 PM";
+const RECEPTION_TIME = "5:30 PM";
 const RECEPTION_VENUE = "Ascott Parc Event Centre";
 const RECEPTION_ADDRESS = "2839 Rutherford Road, Vaughan, ON L4K 2N7";
 const DRESS_CODE = "Formal — black kindly discouraged";
@@ -21,7 +20,7 @@ const GOOGLE_CAL_URL =
   "https://calendar.google.com/calendar/render?action=TEMPLATE" +
   "&text=Bino+%26+Vivo%27s+Wedding" +
   "&dates=20260830T180000Z/20260831T030000Z" +
-  "&details=Ceremony+at+2+PM+-+St.+Peter+%26+St.+Paul+Coptic+Orthodox+Church%2C+Oakville.+Cocktail+hour+at+6+PM+and+reception+at+7+PM+-+Ascott+Parc+Event+Centre%2C+Vaughan." +
+  "&details=Ceremony+at+2+PM+-+St.+Peter+%26+St.+Paul+Coptic+Orthodox+Church%2C+Oakville.+Reception+at+5%3A30+PM+-+Ascott+Parc+Event+Centre%2C+Vaughan." +
   "&location=St.+Peter+%26+St.+Paul+Coptic+Orthodox+Church%2C+1177+Invicta+Drive%2C+Oakville%2C+ON+L6H+4M1" +
   "&sf=true&output=xml";
 
@@ -52,7 +51,7 @@ const ICS_CONTENT = [
   "DTSTART;TZID=America/Toronto:20260830T140000",
   "DTEND;TZID=America/Toronto:20260830T230000",
   "SUMMARY:Bino & Vivo's Wedding",
-  "DESCRIPTION:Ceremony at 2 PM — St. Peter & St. Paul Coptic Orthodox Church\\, 1177 Invicta Drive\\, Oakville. Cocktail hour at 6 PM and reception at 7 PM — Ascott Parc Event Centre\\, 2839 Rutherford Road\\, Vaughan.",
+  "DESCRIPTION:Ceremony at 2 PM — St. Peter & St. Paul Coptic Orthodox Church\\, 1177 Invicta Drive\\, Oakville. Reception at 5:30 PM — Ascott Parc Event Centre\\, 2839 Rutherford Road\\, Vaughan.",
   "LOCATION:St. Peter & St. Paul Coptic Orthodox Church\\, 1177 Invicta Drive\\, Oakville\\, ON L6H 4M1",
   "STATUS:CONFIRMED",
   "SEQUENCE:0",
@@ -110,8 +109,6 @@ function buildHtmlEmail({ name, status, attendingMembers, declinedMembers, isUpd
             <tr><td style="padding: 6px 16px 6px 0; font-weight: 600; color: #7ba7c2;">Date</td><td style="padding: 6px 0;">${WEDDING_DATE}</td></tr>
             <tr><td style="padding: 10px 16px 2px 0; font-weight: 600; color: #7ba7c2;" colspan="2">Ceremony</td></tr>
             <tr><td style="padding: 2px 16px 2px 16px;">${CEREMONY_TIME}</td><td style="padding: 2px 0;">${CEREMONY_VENUE}<br/>${CEREMONY_ADDRESS}</td></tr>
-            <tr><td style="padding: 10px 16px 2px 0; font-weight: 600; color: #7ba7c2;" colspan="2">Cocktail Hour</td></tr>
-            <tr><td style="padding: 2px 16px 2px 16px;">${COCKTAIL_TIME}</td><td style="padding: 2px 0;">${RECEPTION_VENUE}<br/>${RECEPTION_ADDRESS}</td></tr>
             <tr><td style="padding: 10px 16px 2px 0; font-weight: 600; color: #7ba7c2;" colspan="2">Reception</td></tr>
             <tr><td style="padding: 2px 16px 2px 16px;">${RECEPTION_TIME}</td><td style="padding: 2px 0;">${RECEPTION_VENUE}<br/>${RECEPTION_ADDRESS}</td></tr>
             <tr><td style="padding: 10px 16px 2px 0; font-weight: 600; color: #7ba7c2;">Dress Code</td><td style="padding: 10px 0 2px 0;">${DRESS_CODE}</td></tr>
@@ -198,7 +195,7 @@ function buildPlainText({ name, status, attendingMembers, declinedMembers, isUpd
     text += "\n";
   }
   if (isAccepting) {
-    text += `Event Details:\n  Date: ${WEDDING_DATE}\n\n  Ceremony — ${CEREMONY_TIME}\n  ${CEREMONY_VENUE}\n  ${CEREMONY_ADDRESS}\n\n  Cocktail Hour — ${COCKTAIL_TIME}\n  ${RECEPTION_VENUE}\n  ${RECEPTION_ADDRESS}\n\n  Reception — ${RECEPTION_TIME}\n  ${RECEPTION_VENUE}\n  ${RECEPTION_ADDRESS}\n\n  Dress Code: ${DRESS_CODE}\n\n`;
+    text += `Event Details:\n  Date: ${WEDDING_DATE}\n\n  Ceremony — ${CEREMONY_TIME}\n  ${CEREMONY_VENUE}\n  ${CEREMONY_ADDRESS}\n\n  Reception — ${RECEPTION_TIME}\n  ${RECEPTION_VENUE}\n  ${RECEPTION_ADDRESS}\n\n  Dress Code: ${DRESS_CODE}\n\n`;
     text += `Add to Google Calendar: ${GOOGLE_CAL_URL}\nAdd to Apple Calendar: https://binovivo.ca/wedding.ics\n\n`;
     text += "We are so excited to celebrate with you!\n\n";
   } else {

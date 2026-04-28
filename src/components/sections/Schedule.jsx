@@ -13,8 +13,7 @@ const segments = [
     address: '2839 Rutherford Road, Vaughan',
     mapUrl: 'https://maps.google.com/?q=Ascott+Parc+Event+Centre+2839+Rutherford+Road+Vaughan',
     events: [
-      { time: '6:00 PM', title: 'Cocktail Hour' },
-      { time: '7:00 PM', title: 'Reception' },
+      { time: '5:30 PM', title: 'Reception' },
     ],
   },
 ];

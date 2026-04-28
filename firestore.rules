@@ -1,0 +1,37 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Settings ─────────────────────────────────────────────
+    // Public reads (the RSVP form needs to know if it's open).
+    // Only signed-in admins can write.
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // ── Guests ───────────────────────────────────────────────
+    // Public reads so the RSVP lookup form can find a guest by name.
+    // Public is allowed to update ONLY the `hasRsvped` field
+    // (the RSVP form flips it to true after a successful submit).
+    // Everything else (create, delete, full updates) requires admin auth.
+    match /guests/{guestId} {
+      allow read: if true;
+      allow create, delete: if request.auth != null;
+      allow update: if request.auth != null
+                    || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['hasRsvped']);
+    }
+
+    // ── RSVPs ────────────────────────────────────────────────
+    // Public can create a new RSVP, read (to find their existing one),
+    // and update (to change their answer before the deadline).
+    // Only admins can delete.
+    match /rsvps/{rsvpId} {
+      allow read: if true;
+      allow create: if true;
+      allow update: if true;
+      allow delete: if request.auth != null;
+    }
+  }
+}

@@ -2,13 +2,16 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 const photos = [
-  { src: '/photos/photo-1.webp', alt: 'Bino and Vivo at a garden table' },
-  { src: '/photos/photo-2.webp', alt: 'Bino and Vivo holding hands across a garden table' },
-  { src: '/photos/photo-3.webp', alt: 'Bino and Vivo seated together in a tropical garden' },
+  { src: '/photos/photo-1.webp', alt: 'Bino and Vivo together', ratio: '3 / 4' },
+  { src: '/photos/photo-2.webp', alt: 'Bino and Vivo together', ratio: '2 / 3' },
+  { src: '/photos/photo-3.webp', alt: 'Bino and Vivo together', ratio: '3 / 2' },
+  { src: '/photos/photo-4.webp', alt: 'Bino and Vivo together', ratio: '2 / 3' },
+  { src: '/photos/photo-5.webp', alt: 'Bino and Vivo together', ratio: '2 / 3' },
 ];
 
 // Slight asymmetry: each photo tilts a different way, like loose prints scattered on a table
-const rotations = [-3, 2, -1.5];
+// The landscape (index 2) sits straighter so it reads as the centerpiece
+const rotations = [-3, 2.5, -1, 2, -2.5];
 
 const photoFilter = 'saturate(0.9) contrast(1.02) sepia(0.05) brightness(1.02)';
 
@@ -68,13 +71,13 @@ export default function Photos() {
             key={p.src}
             initial={{ opacity: 0, y: 28, rotate: rotations[i] - 4 }}
             animate={{ opacity: 1, y: 0, rotate: rotations[i] }}
-            transition={{ duration: 0.95, delay: 0.15 + i * 0.12, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.95, delay: 0.15 + i * 0.1, ease: [0.22, 1, 0.36, 1] }}
             whileHover={{ rotate: 0, scale: 1.03, y: -10 }}
             style={{
               margin: 0,
               flex: 'none',
-              width: 'clamp(320px, 72vw, 560px)',
-              aspectRatio: '3 / 4',
+              height: 'clamp(340px, 50vh, 500px)',
+              aspectRatio: p.ratio,
               scrollSnapAlign: 'center',
               borderRadius: 'clamp(10px, 1.4vw, 16px)',
               overflow: 'hidden',

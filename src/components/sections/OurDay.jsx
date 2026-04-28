@@ -52,9 +52,51 @@ export default function OurDay() {
           Your presence is the only gift we ask for.
         </p>
 
+        <div
+          style={{
+            marginTop: 'clamp(1.8rem, 3vw, 2.4rem)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.7rem',
+            flexWrap: 'wrap',
+          }}
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" style={{ flexShrink: 0 }}>
+            <path
+              d="M7 12 C 3 9, 1 6.5, 1 4.2 C 1 2.4, 2.4 1.2, 4 1.2 C 5.2 1.2, 6.3 1.9, 7 3 C 7.7 1.9, 8.8 1.2, 10 1.2 C 11.6 1.2, 13 2.4, 13 4.2 C 13 6.5, 11 9, 7 12 Z"
+              fill="var(--gold)"
+              opacity="0.65"
+            />
+          </svg>
+          <p
+            style={{
+              margin: 0,
+              fontFamily: "'Cormorant Garamond', serif",
+              fontStyle: 'italic',
+              fontWeight: 400,
+              fontSize: 'clamp(1rem, 1.5vw, 1.15rem)',
+              lineHeight: 1.6,
+              color: 'var(--sage-dark)',
+              opacity: 0.92,
+            }}
+          >
+            but if you insist &mdash; a little something for our new beginning
+            <br />
+            would be lovingly received.
+          </p>
+          <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" style={{ flexShrink: 0 }}>
+            <path
+              d="M7 12 C 3 9, 1 6.5, 1 4.2 C 1 2.4, 2.4 1.2, 4 1.2 C 5.2 1.2, 6.3 1.9, 7 3 C 7.7 1.9, 8.8 1.2, 10 1.2 C 11.6 1.2, 13 2.4, 13 4.2 C 13 6.5, 11 9, 7 12 Z"
+              fill="var(--gold)"
+              opacity="0.65"
+            />
+          </svg>
+        </div>
+
         <p
           style={{
-            marginTop: '2.4rem',
+            marginTop: 'clamp(2rem, 3.5vw, 2.6rem)',
             fontFamily: "'Cormorant Garamond', serif",
             fontStyle: 'italic',
             fontSize: 'clamp(0.9rem, 1.5vw, 1.05rem)',

@@ -116,22 +116,68 @@ export default function Hero() {
           08.30.2026
         </motion.p>
 
-        <motion.p
+        <motion.a
           {...fadeUp}
+          href="#rsvp"
+          onClick={(e) => {
+            e.preventDefault();
+            const el = document.getElementById('rsvp');
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }}
           transition={{ duration: 1, delay: 1.05, ease: 'easeOut' }}
+          whileHover={{ y: -2, letterSpacing: '0.46em' }}
           style={{
-            marginTop: '1rem',
+            marginTop: 'clamp(2.2rem, 4vh, 3rem)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.9rem',
+            padding: '0.95rem 2.4rem',
             fontFamily: "'Cormorant Garamond', serif",
             fontStyle: 'italic',
             fontWeight: 400,
-            fontSize: 'clamp(0.9rem, 1.4vw, 1.05rem)',
-            color: 'rgba(243, 230, 193, 0.78)',
-            letterSpacing: '0.06em',
+            fontSize: 'clamp(0.78rem, 1.2vw, 0.92rem)',
+            letterSpacing: '0.42em',
+            textTransform: 'uppercase',
+            color: 'rgba(243, 230, 193, 0.95)',
+            border: '1px solid rgba(243, 230, 193, 0.55)',
+            borderRadius: '999px',
+            textDecoration: 'none',
+            background: 'rgba(20, 24, 18, 0.18)',
+            backdropFilter: 'blur(2px)',
+            WebkitBackdropFilter: 'blur(2px)',
             textShadow: '0 2px 14px rgba(0,0,0,0.55)',
+            cursor: 'pointer',
+            transition: 'background 0.4s ease, border-color 0.4s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'rgba(243, 230, 193, 0.12)';
+            e.currentTarget.style.borderColor = 'rgba(243, 230, 193, 0.85)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'rgba(20, 24, 18, 0.18)';
+            e.currentTarget.style.borderColor = 'rgba(243, 230, 193, 0.55)';
           }}
         >
-          Oakville &middot; Vaughan
-        </motion.p>
+          <span
+            aria-hidden="true"
+            style={{
+              width: '6px',
+              height: '6px',
+              borderRadius: '50%',
+              background: 'rgba(243, 230, 193, 0.7)',
+            }}
+          />
+          Rsvp
+          <span
+            aria-hidden="true"
+            style={{
+              width: '6px',
+              height: '6px',
+              borderRadius: '50%',
+              background: 'rgba(243, 230, 193, 0.7)',
+            }}
+          />
+        </motion.a>
       </div>
     </section>
   );

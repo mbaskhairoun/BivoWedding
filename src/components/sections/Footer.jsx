@@ -20,15 +20,15 @@ export default function Footer() {
       >
         <div
           style={{
-            fontFamily: "'Great Vibes', cursive",
+            fontFamily: "'Pinyon Script', cursive",
             fontStyle: 'normal',
-            fontSize: 'clamp(2.2rem, 5vw, 3.4rem)',
+            fontSize: 'clamp(2.6rem, 5.6vw, 3.8rem)',
             color: 'var(--sage-dark)',
             lineHeight: 1,
-            letterSpacing: '-0.02em',
+            letterSpacing: '0.01em',
           }}
         >
-          B <span style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: '0.55em', color: 'var(--gold)' }}>&amp;</span> V
+          B <span style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: '0.5em', color: 'var(--gold)' }}>&amp;</span> V
         </div>
 
         <p
@@ -41,7 +41,7 @@ export default function Footer() {
             color: 'var(--muted)',
           }}
         >
-          30 · 08 · 2026 &middot; Oakville &middot; Vaughan
+          08.30.2026
         </p>
 
         <p

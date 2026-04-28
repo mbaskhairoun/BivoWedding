@@ -37,16 +37,16 @@ export default function Navigation() {
       <a
         href="#home"
         style={{
-          fontFamily: "'Great Vibes', cursive",
+          fontFamily: "'Pinyon Script', cursive",
           fontStyle: 'normal',
-          fontSize: 'clamp(1.5rem, 2.4vw, 1.9rem)',
+          fontSize: 'clamp(1.7rem, 2.6vw, 2.1rem)',
           color: 'var(--sage-dark)',
           textDecoration: 'none',
-          letterSpacing: '-0.02em',
+          letterSpacing: '0.01em',
           lineHeight: 1,
         }}
       >
-        B <span style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: '0.6em', color: 'var(--gold)' }}>&amp;</span> V
+        B <span style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: '0.55em', color: 'var(--gold)' }}>&amp;</span> V
       </a>
 
       <ul

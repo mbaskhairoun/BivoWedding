@@ -665,7 +665,7 @@ export default function RSVP() {
           transition={{ duration: 0.7, delay: 0.3 }}
           style={styles.deadline}
         >
-          Kindly respond by August 1, 2026
+          Kindly respond by July 1, 2026
         </motion.p>
 
         {/* Error display */}

@@ -26,33 +26,10 @@ export default function Photos() {
         overflow: 'hidden',
       }}
     >
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-80px' }}
-        transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
-        style={{ paddingInline: '1.25rem' }}
-      >
-        <p style={labelStyle}>Photographs</p>
-        <h2
-          style={{
-            marginTop: '1rem',
-            fontFamily: "'Pinyon Script', cursive",
-            fontStyle: 'normal',
-            fontWeight: 400,
-            fontSize: 'clamp(2.4rem, 5.5vw, 4rem)',
-            lineHeight: 1.05,
-            color: 'var(--forest)',
-          }}
-        >
-          Together
-        </h2>
-      </motion.div>
-
       <div
         className="photo-rail"
         style={{
-          marginTop: 'clamp(2.8rem, 5vw, 4.4rem)',
+          marginTop: 0,
           display: 'flex',
           alignItems: 'center',
           gap: 'clamp(1.4rem, 3.5vw, 2.8rem)',

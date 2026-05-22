@@ -341,7 +341,24 @@ export default function RSVP() {
 
     const guestsRef = collection(db, 'guests');
     const allGuestsSnap = await getDocs(guestsRef);
-    const allGuests = allGuestsSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    // The admin panel stores names under `invitationName` / `members`,
+    // while the search below expects `name` / `familyMembers`. Normalize
+    // both schemas into one shape so the lookup works either way.
+    const allGuests = allGuestsSnap.docs.map((d) => {
+      const data = d.data();
+      const name = data.name || data.invitationName || '';
+      const familyMembers = data.familyMembers || data.members || [];
+      return {
+        id: d.id,
+        ...data,
+        name,
+        familyMembers,
+        nameLower: (data.nameLower || name).toLowerCase(),
+        familyMembersLower: (data.familyMembersLower || familyMembers).map(
+          (m) => (m || '').toLowerCase()
+        ),
+      };
+    });
 
     const results = [];
     const addedIds = new Set();
@@ -583,13 +600,37 @@ export default function RSVP() {
         console.warn('Could not update guest hasRsvped:', err);
       }
 
-      // Fire-and-forget confirmation email
+      // Fire-and-forget confirmation email. The API expects a specific
+      // payload shape, so map our RSVP data onto it here.
       try {
-        fetch('/api/send-rsvp-confirmation', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(rsvpData),
-        }).catch(() => {});
+        const isValidEmail = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+        const recipients = [];
+        const seenEmails = new Set();
+        const addRecipient = (email, name) => {
+          const trimmed = (email || '').trim();
+          const key = trimmed.toLowerCase();
+          if (isValidEmail(trimmed) && !seenEmails.has(key) && recipients.length < 10) {
+            seenEmails.add(key);
+            recipients.push({ email: trimmed, name: name || guest.name || trimmed });
+          }
+        };
+        addRecipient(form.email, guest.name);
+        Object.entries(memberEmails).forEach(([member, email]) => addRecipient(email, member));
+
+        if (recipients.length > 0) {
+          fetch('/api/send-rsvp-confirmation', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name: guest.name || rsvpData.fullName || 'Guest',
+              status: form.attending === 'yes' ? 'Joyfully Accepts' : 'Regretfully Declines',
+              attendingMembers: rsvpData.attendingMembers,
+              declinedMembers: rsvpData.declinedMembers,
+              emails: recipients,
+              isUpdate: !!existingRsvpId,
+            }),
+          }).catch(() => {});
+        }
       } catch {
         // Silently ignore email errors
       }

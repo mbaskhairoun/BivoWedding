@@ -21,10 +21,10 @@ TZNAME:EST
 END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
-DTSTART;TZID=America/Toronto:20260830T140000
+DTSTART;TZID=America/Toronto:20260830T123000
 DTEND;TZID=America/Toronto:20260830T230000
 SUMMARY:Bino & Vivo's Wedding
-DESCRIPTION:Ceremony at 2 PM — St. Peter & St. Paul Coptic Orthodox Church\, 1177 Invicta Drive\, Oakville. Reception at 5:30 PM — Ascott Parc Event Centre\, 2839 Rutherford Road\, Vaughan.
+DESCRIPTION:Ceremony at 12:30 PM — St. Peter & St. Paul Coptic Orthodox Church\, 1177 Invicta Drive\, Oakville. Reception at 5:00 PM — Ascott Parc Event Centre\, 2839 Rutherford Road\, Concord.
 LOCATION:St. Peter & St. Paul Coptic Orthodox Church\, 1177 Invicta Drive\, Oakville\, ON L6H 4M1
 STATUS:CONFIRMED
 SEQUENCE:0

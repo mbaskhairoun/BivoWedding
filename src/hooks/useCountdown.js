@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
-// 2 PM ceremony in Toronto (EDT, UTC-4)
-const WEDDING_DATE = new Date('2026-08-30T14:00:00-04:00');
+// 12:30 PM ceremony in Toronto (EDT, UTC-4)
+const WEDDING_DATE = new Date('2026-08-30T12:30:00-04:00');
 
 export function useCountdown() {
   const [timeLeft, setTimeLeft] = useState(getTimeLeft());

@@ -8,19 +8,20 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const WEDDING_DATE = "August 30, 2026";
 const WEDDING_END_TIME = "11:00 PM";
-const CEREMONY_TIME = "2:00 PM";
+const CEREMONY_TIME = "12:30 PM";
 const CEREMONY_VENUE = "St. Peter & St. Paul Coptic Orthodox Church";
 const CEREMONY_ADDRESS = "1177 Invicta Drive, Oakville, ON L6H 4M1";
-const RECEPTION_TIME = "5:30 PM";
+const RECEPTION_TIME = "5:00 PM";
 const RECEPTION_VENUE = "Ascott Parc Event Centre";
-const RECEPTION_ADDRESS = "2839 Rutherford Road, Vaughan, ON L4K 2N7";
-const DRESS_CODE = "Formal — black kindly discouraged";
+const RECEPTION_ADDRESS = "2839 Rutherford Road, Concord, ON L4K 2N7";
+const DRESS_CODE = "Formal attire — kindly avoid black";
+const OUTDOOR_NOTE = "Our celebration is outdoors in the evening — we suggest bringing a jacket, wrap, or scarf to stay cozy.";
 
 const GOOGLE_CAL_URL =
   "https://calendar.google.com/calendar/render?action=TEMPLATE" +
   "&text=Bino+%26+Vivo%27s+Wedding" +
-  "&dates=20260830T180000Z/20260831T030000Z" +
-  "&details=Ceremony+at+2+PM+-+St.+Peter+%26+St.+Paul+Coptic+Orthodox+Church%2C+Oakville.+Reception+at+5%3A30+PM+-+Ascott+Parc+Event+Centre%2C+Vaughan." +
+  "&dates=20260830T163000Z/20260831T030000Z" +
+  "&details=Ceremony+at+12%3A30+PM+-+St.+Peter+%26+St.+Paul+Coptic+Orthodox+Church%2C+Oakville.+Reception+at+5%3A00+PM+-+Ascott+Parc+Event+Centre%2C+Concord." +
   "&location=St.+Peter+%26+St.+Paul+Coptic+Orthodox+Church%2C+1177+Invicta+Drive%2C+Oakville%2C+ON+L6H+4M1" +
   "&sf=true&output=xml";
 
@@ -48,10 +49,10 @@ const ICS_CONTENT = [
   "END:STANDARD",
   "END:VTIMEZONE",
   "BEGIN:VEVENT",
-  "DTSTART;TZID=America/Toronto:20260830T140000",
+  "DTSTART;TZID=America/Toronto:20260830T123000",
   "DTEND;TZID=America/Toronto:20260830T230000",
   "SUMMARY:Bino & Vivo's Wedding",
-  "DESCRIPTION:Ceremony at 2 PM — St. Peter & St. Paul Coptic Orthodox Church\\, 1177 Invicta Drive\\, Oakville. Reception at 5:30 PM — Ascott Parc Event Centre\\, 2839 Rutherford Road\\, Vaughan.",
+  "DESCRIPTION:Ceremony at 12:30 PM — St. Peter & St. Paul Coptic Orthodox Church\\, 1177 Invicta Drive\\, Oakville. Reception at 5:00 PM — Ascott Parc Event Centre\\, 2839 Rutherford Road\\, Concord.",
   "LOCATION:St. Peter & St. Paul Coptic Orthodox Church\\, 1177 Invicta Drive\\, Oakville\\, ON L6H 4M1",
   "STATUS:CONFIRMED",
   "SEQUENCE:0",
@@ -113,6 +114,7 @@ function buildHtmlEmail({ name, status, attendingMembers, declinedMembers, isUpd
             <tr><td style="padding: 2px 16px 2px 16px;">${RECEPTION_TIME}</td><td style="padding: 2px 0;">${RECEPTION_VENUE}<br/>${RECEPTION_ADDRESS}</td></tr>
             <tr><td style="padding: 10px 16px 2px 0; font-weight: 600; color: #7ba7c2;">Dress Code</td><td style="padding: 10px 0 2px 0;">${DRESS_CODE}</td></tr>
           </table>
+          <p style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 14px; color: #8a8a8a; margin: 18px auto 0; max-width: 440px; line-height: 1.6;">${OUTDOOR_NOTE}</p>
           <div style="margin-top: 24px;">
             <a href="${GOOGLE_CAL_URL}" target="_blank" style="display: inline-block; background-color: #8faa8c; color: #ffffff; font-family: 'Josefin Sans', Arial, sans-serif; font-size: 14px; font-weight: 600; text-decoration: none; padding: 10px 24px; border-radius: 6px; margin: 4px 8px;">Add to Google Calendar</a>
             <a href="https://binovivo.ca/wedding.ics" style="display: inline-block; background-color: #7ba7c2; color: #ffffff; font-family: 'Josefin Sans', Arial, sans-serif; font-size: 14px; font-weight: 600; text-decoration: none; padding: 10px 24px; border-radius: 6px; margin: 4px 8px;">Add to Apple Calendar</a>
@@ -195,7 +197,7 @@ function buildPlainText({ name, status, attendingMembers, declinedMembers, isUpd
     text += "\n";
   }
   if (isAccepting) {
-    text += `Event Details:\n  Date: ${WEDDING_DATE}\n\n  Ceremony — ${CEREMONY_TIME}\n  ${CEREMONY_VENUE}\n  ${CEREMONY_ADDRESS}\n\n  Reception — ${RECEPTION_TIME}\n  ${RECEPTION_VENUE}\n  ${RECEPTION_ADDRESS}\n\n  Dress Code: ${DRESS_CODE}\n\n`;
+    text += `Event Details:\n  Date: ${WEDDING_DATE}\n\n  Ceremony — ${CEREMONY_TIME}\n  ${CEREMONY_VENUE}\n  ${CEREMONY_ADDRESS}\n\n  Reception — ${RECEPTION_TIME}\n  ${RECEPTION_VENUE}\n  ${RECEPTION_ADDRESS}\n\n  Dress Code: ${DRESS_CODE}\n  ${OUTDOOR_NOTE}\n\n`;
     text += `Add to Google Calendar: ${GOOGLE_CAL_URL}\nAdd to Apple Calendar: https://binovivo.ca/wedding.ics\n\n`;
     text += "We are so excited to celebrate with you!\n\n";
   } else {

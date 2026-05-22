@@ -9,6 +9,7 @@ import Countdown from './components/sections/Countdown';
 import OurDay from './components/sections/OurDay';
 import Photos from './components/sections/Photos';
 import Schedule from './components/sections/Schedule';
+import DressCode from './components/sections/DressCode';
 import RSVP from './components/sections/RSVP';
 import Footer from './components/sections/Footer';
 
@@ -50,6 +51,7 @@ function App() {
         <OurDay />
         <Photos />
         <Schedule />
+        <DressCode />
         <RSVP />
         <Footer />
       </main>

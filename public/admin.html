@@ -1226,14 +1226,14 @@
     const mode = $('#rsvp-view-mode').value;
 
     let filtered = [...rsvps];
-    if (filter === 'attending') filtered = filtered.filter(r => r.attending === true);
-    if (filter === 'declined') filtered = filtered.filter(r => r.attending === false);
+    if (filter === 'attending') filtered = filtered.filter(isAttending);
+    if (filter === 'declined') filtered = filtered.filter(isDeclined);
 
     // Stats
     const totalRsvps = rsvps.length;
-    const attendingCount = rsvps.filter(r => r.attending === true).length;
-    const declinedCount = rsvps.filter(r => r.attending === false).length;
-    const headcount = rsvps.filter(r => r.attending).reduce((s, r) => s + (r.guestCount || r.attendingCount || 1), 0);
+    const attendingCount = rsvps.filter(isAttending).length;
+    const declinedCount = rsvps.filter(isDeclined).length;
+    const headcount = rsvps.reduce((s, r) => s + attendeeCount(r), 0);
 
     $('#rsvp-stats').innerHTML = `
       <div class="stat-card"><div class="stat-value">${totalRsvps}</div><div class="stat-label">Total RSVPs</div></div>
@@ -1259,11 +1259,11 @@
     $('#rsvp-table-body').innerHTML = filtered.map(r => `
       <tr>
         <td><strong>${esc(r.invitationName || r.name || '—')}</strong></td>
-        <td>${r.attending
+        <td>${isAttending(r)
           ? '<span class="badge badge-attending">Attending</span>'
           : '<span class="badge badge-declined">Declined</span>'
         }</td>
-        <td>${r.guestCount || r.attendingCount || (r.guests ? r.guests.length : 1)}</td>
+        <td>${attendeeCount(r)}</td>
         <td class="text-sm">${formatDate(r.submittedAt)}</td>
         <td>
           <button class="btn btn-danger btn-sm" onclick="window._deleteRsvp('${r.id}','${esc(r.invitationName || r.name || '')}')">Delete</button>
@@ -1285,37 +1285,21 @@
 
     const rows = [];
     filtered.forEach(r => {
-      if (r.guests && r.guests.length) {
-        r.guests.forEach(g => {
-          rows.push(`
-            <tr>
-              <td>${esc(g.name || '—')}</td>
-              <td class="text-sm">${esc(r.invitationName || r.name || '')}</td>
-              <td>${(g.attending !== undefined ? g.attending : r.attending)
-                ? '<span class="badge badge-attending">Attending</span>'
-                : '<span class="badge badge-declined">Declined</span>'
-              }</td>
-              <td class="text-sm">${esc(g.mealPreference || '—')}</td>
-              <td class="text-sm">${esc(g.dietary || '—')}</td>
-              <td class="text-sm">${formatDate(r.submittedAt)}</td>
-            </tr>
-          `);
-        });
-      } else {
+      rsvpMembers(r).forEach(m => {
         rows.push(`
           <tr>
-            <td>${esc(r.name || r.invitationName || '—')}</td>
-            <td class="text-sm">${esc(r.invitationName || '')}</td>
-            <td>${r.attending
+            <td>${esc(m.name || '—')}</td>
+            <td class="text-sm">${esc(r.invitationName || r.name || '')}</td>
+            <td>${m.attending
               ? '<span class="badge badge-attending">Attending</span>'
               : '<span class="badge badge-declined">Declined</span>'
             }</td>
-            <td class="text-sm">${esc(r.mealPreference || '—')}</td>
+            <td class="text-sm">${esc(m.attending ? (r.mealPreference || '—') : '—')}</td>
             <td class="text-sm">${esc(r.dietary || '—')}</td>
             <td class="text-sm">${formatDate(r.submittedAt)}</td>
           </tr>
         `);
-      }
+      });
     });
 
     $('#rsvp-table-body').innerHTML = rows.join('');
@@ -1339,8 +1323,8 @@
     rsvps.forEach(r => {
       rows.push([
         r.invitationName || r.name || '',
-        r.attending ? 'Yes' : 'No',
-        r.guestCount || r.attendingCount || (r.guests ? r.guests.length : 1),
+        isAttending(r) ? 'Yes' : 'No',
+        attendeeCount(r),
         r.email || '',
         r.phone || '',
         r.mealPreference || '',
@@ -1423,9 +1407,9 @@
     const totalInvitations = guests.length;
     const totalIndividuals = guests.reduce((s, g) => s + (g.members ? g.members.length : 0), 0);
     const totalRsvps = rsvps.length;
-    const attending = rsvps.filter(r => r.attending);
-    const declined = rsvps.filter(r => !r.attending);
-    const headcount = attending.reduce((s, r) => s + (r.guestCount || r.attendingCount || 1), 0);
+    const attending = rsvps.filter(isAttending);
+    const declined = rsvps.filter(isDeclined);
+    const headcount = attending.reduce((s, r) => s + attendeeCount(r), 0);
     const responseRate = totalInvitations ? ((totalRsvps / totalInvitations) * 100).toFixed(1) : 0;
     const attendanceRate = totalRsvps ? ((attending.length / totalRsvps) * 100).toFixed(1) : 0;
     const pending = totalInvitations - totalRsvps;
@@ -1502,16 +1486,11 @@
       }
     });
 
-    // Meal preferences pie
+    // Meal preferences pie — meal is stored once per invitation, so weight it by
+    // the number attending to approximate plates needed.
     const mealCounts = {};
-    rsvps.forEach(r => {
-      if (r.guests && r.guests.length) {
-        r.guests.forEach(g => {
-          if (g.mealPreference) mealCounts[g.mealPreference] = (mealCounts[g.mealPreference] || 0) + 1;
-        });
-      } else if (r.mealPreference) {
-        mealCounts[r.mealPreference] = (mealCounts[r.mealPreference] || 0) + 1;
-      }
+    rsvps.filter(isAttending).forEach(r => {
+      if (r.mealPreference) mealCounts[r.mealPreference] = (mealCounts[r.mealPreference] || 0) + attendeeCount(r);
     });
 
     const mealLabels = Object.keys(mealCounts);
@@ -1538,8 +1517,8 @@
 
     // Family size distribution bar
     const sizeCounts = {};
-    rsvps.filter(r => r.attending).forEach(r => {
-      const size = r.guestCount || r.attendingCount || (r.guests ? r.guests.length : 1);
+    rsvps.filter(isAttending).forEach(r => {
+      const size = attendeeCount(r);
       sizeCounts[size] = (sizeCounts[size] || 0) + 1;
     });
 
@@ -1593,6 +1572,24 @@
     if (r.rsvpStatus === 'accepted' || r.attending === 'yes' || r.attending === true) return 'attending';
     if (r.rsvpStatus === 'declined' || r.attending === 'no' || r.attending === false) return 'declined';
     return 'pending';
+  }
+  function isAttending(r) { return rsvpStatusOf(r) === 'attending'; }
+  function isDeclined(r) { return rsvpStatusOf(r) === 'declined'; }
+  // How many people this invitation is bringing (the head count for this RSVP).
+  function attendeeCount(r) {
+    if (!isAttending(r)) return 0;
+    if (typeof r.totalAttending === 'number') return r.totalAttending;
+    if (Array.isArray(r.attendingMembers) && r.attendingMembers.length) return r.attendingMembers.length;
+    if (Array.isArray(r.guests) && r.guests.length) return r.guests.length;
+    return 1;
+  }
+  // Per-person rows for an RSVP: { name, attending } for every household member.
+  function rsvpMembers(r) {
+    const out = [];
+    (Array.isArray(r.attendingMembers) ? r.attendingMembers : []).forEach(n => out.push({ name: n, attending: true }));
+    (Array.isArray(r.declinedMembers) ? r.declinedMembers : []).forEach(n => out.push({ name: n, attending: false }));
+    if (!out.length) out.push({ name: r.fullName || r.invitationName || r.name || '—', attending: isAttending(r) });
+    return out;
   }
 
   // Collect every stored email — from the guests collection AND the rsvps

@@ -787,8 +787,12 @@
           <div class="form-group">
             <label>Message (HTML supported)</label>
             <textarea id="email-body" rows="10" placeholder="Write your message here..."></textarea>
+            <small class="text-sm text-muted" style="display:block; margin-top:6px;">
+              Tip: use <code>{{name}}</code>, <code>{{first_name}}</code>, or <code>{{email}}</code> in the subject or message to personalize per recipient. Each guest gets an individual email — their address is never visible to others.
+            </small>
           </div>
           <button class="btn btn-primary" id="send-email-btn">Send Email</button>
+          <p class="text-sm text-muted mt-1" id="email-status" style="display:none;"></p>
         </div>
       </div>
     </div>
@@ -1582,26 +1586,77 @@
   }
 
   // ── EMAIL ───────────────────────────────────────────────────
+
+  // Normalise an RSVP record to a status: 'attending' | 'declined' | 'pending'
+  function rsvpStatusOf(r) {
+    if (!r) return 'pending';
+    if (r.rsvpStatus === 'accepted' || r.attending === 'yes' || r.attending === true) return 'attending';
+    if (r.rsvpStatus === 'declined' || r.attending === 'no' || r.attending === false) return 'declined';
+    return 'pending';
+  }
+
+  // Collect every stored email — from the guests collection AND the rsvps
+  // collection (guest-level email + per-member emails, including RSVPs whose
+  // guestId no longer matches a guest), deduped by lowercased address.
+  function collectRecipients() {
+    const rsvpByGuestId = {};
+    rsvps.forEach(r => { if (r.guestId) rsvpByGuestId[r.guestId] = r; });
+
+    const map = new Map();
+    const add = (name, email, status) => {
+      const trimmed = (email || '').toString().trim();
+      if (!trimmed || !trimmed.includes('@')) return;
+      const key = trimmed.toLowerCase();
+      if (map.has(key)) return;
+      map.set(key, {
+        name: (name && name.toString().trim()) || trimmed,
+        email: trimmed,
+        status: status || 'pending',
+        custom: false,
+      });
+    };
+
+    // 1. Emails stored on guest records
+    guests.forEach(g => {
+      const status = g.hasRsvped ? rsvpStatusOf(rsvpByGuestId[g.id]) : 'pending';
+      if (g.email) add(g.invitationName, g.email, status);
+    });
+
+    // 2. Emails stored on RSVP records (rsvp.email + per-member emails)
+    rsvps.forEach(r => {
+      const status = rsvpStatusOf(r);
+      const label = r.invitationName || r.name || '';
+      if (r.email) add(label, r.email, status);
+      if (r.memberEmails && typeof r.memberEmails === 'object') {
+        Object.entries(r.memberEmails).forEach(([member, email]) => add(member, email, status));
+      }
+    });
+
+    // 3. Manually added custom recipients
+    customRecipients.forEach(email => {
+      const key = (email || '').toString().trim().toLowerCase();
+      if (!key) return;
+      if (map.has(key)) { map.get(key).custom = true; return; }
+      map.set(key, { name: 'Custom', email: email.trim(), status: 'pending', custom: true });
+    });
+
+    return Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name));
+  }
+
   function renderRecipients() {
     const filter = $('#email-filter').value;
-    let list = guests.filter(g => g.email);
-
-    if (filter === 'attending') list = list.filter(g => rsvps.some(r => (r.invitationName === g.invitationName || r.guestId === g.id) && r.attending));
-    if (filter === 'declined') list = list.filter(g => rsvps.some(r => (r.invitationName === g.invitationName || r.guestId === g.id) && !r.attending));
-    if (filter === 'pending') list = list.filter(g => !g.hasRsvped);
+    let list = collectRecipients();
+    if (filter === 'attending') list = list.filter(r => r.status === 'attending' || r.custom);
+    if (filter === 'declined') list = list.filter(r => r.status === 'declined' || r.custom);
+    if (filter === 'pending') list = list.filter(r => r.status === 'pending');
 
     const container = $('#recipient-list');
-    container.innerHTML = list.map(g => `
+    container.innerHTML = list.map(r => `
       <div class="recipient-item">
-        <input type="checkbox" checked data-email="${esc(g.email)}" data-name="${esc(g.invitationName)}" />
-        <span>${esc(g.invitationName)} <span class="text-muted">(${esc(g.email)})</span></span>
+        <input type="checkbox" checked data-email="${esc(r.email)}" data-name="${esc(r.name)}" />
+        <span>${esc(r.name)} <span class="text-muted">(${esc(r.email)}${r.custom ? ', custom' : ''})</span></span>
       </div>
-    `).join('') + customRecipients.map(email => `
-      <div class="recipient-item">
-        <input type="checkbox" checked data-email="${esc(email)}" data-name="Custom" />
-        <span>${esc(email)} <span class="text-muted">(custom)</span></span>
-      </div>
-    `).join('');
+    `).join('') || '<p class="text-sm text-muted">No recipients match this filter.</p>';
 
     updateRecipientCount();
   }
@@ -1646,38 +1701,68 @@
 
     if (!recipients.length) { toast('Select at least one recipient', 'error'); return; }
 
+    const total = recipients.length;
+    if (!confirm(`Send email to ${total} recipient(s)?`)) return;
+
     const btn = $('#send-email-btn');
+    const statusEl = $('#email-status');
     btn.disabled = true;
-    btn.textContent = 'Sending...';
+    statusEl.style.display = 'block';
 
-    try {
-      const token = await auth.currentUser.getIdToken();
-      const res = await fetch('/api/send-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          recipients,
-          subject,
-          html: body,
-          from: 'info@binovivo.ca'
-        })
-      });
+    // Loop one recipient per request so a single serverless invocation never
+    // approaches the timeout regardless of recipient count, and each guest
+    // receives an individual message (their address is never shared).
+    let token = '';
+    try { token = await auth.currentUser.getIdToken(); } catch (e) { /* sent unauthenticated, server rejects */ }
 
-      const data = await res.json();
-      if (res.ok) {
-        toast(`Email sent to ${recipients.length} recipient(s)`, 'success');
-      } else {
-        toast('Send failed: ' + (data.error || 'Unknown error'), 'error');
+    const failures = [];
+    let succeeded = 0;
+
+    for (let i = 0; i < total; i++) {
+      const recipient = recipients[i];
+      const progress = `${i + 1}/${total}`;
+      btn.textContent = `Sending ${progress}...`;
+      statusEl.textContent = `Sending ${progress} — ${recipient.email}`;
+
+      try {
+        const res = await fetch('/api/send-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            recipients: [recipient],
+            subject,
+            html: body,
+            from_email: 'info@binovivo.ca',
+            from_name: 'Bino & Vivo'
+          })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.success !== false) {
+          succeeded++;
+        } else {
+          failures.push({ email: recipient.email, error: data.error || `HTTP ${res.status}` });
+        }
+      } catch (err) {
+        failures.push({ email: recipient.email, error: err.message });
       }
-    } catch (err) {
-      toast('Send failed: ' + err.message, 'error');
     }
 
     btn.disabled = false;
     btn.textContent = 'Send Email';
+
+    if (failures.length === 0) {
+      statusEl.textContent = `Sent ${succeeded} of ${total} email(s) successfully.`;
+      toast(`Email sent to ${succeeded} recipient(s)`, 'success');
+    } else if (succeeded === 0) {
+      statusEl.textContent = `All ${total} email(s) failed. First error: ${failures[0].error}`;
+      toast('Send failed — see status below', 'error');
+    } else {
+      statusEl.textContent = `Sent ${succeeded} of ${total}; ${failures.length} failed: ${failures.map(f => f.email).join(', ')}`;
+      toast(`Sent ${succeeded} of ${total}; ${failures.length} failed`, 'error');
+    }
   });
 
   // ── DELETE HANDLER ──────────────────────────────────────────

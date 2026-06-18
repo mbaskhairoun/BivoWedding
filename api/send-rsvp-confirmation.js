@@ -71,6 +71,16 @@ function getCorsHeaders(origin) {
   };
 }
 
+function deduplicateEmails(emails) {
+  const seen = new Set();
+  return emails.filter((e) => {
+    const lower = String(e.email || "").trim().toLowerCase();
+    if (!lower || seen.has(lower)) return false;
+    seen.add(lower);
+    return true;
+  });
+}
+
 function escapeHtml(str) {
   return String(str)
     .replace(/&/g, "&amp;")
@@ -240,12 +250,17 @@ export default async function handler(req, res) {
     const apiToken = process.env.BIVO_MLSN_API_TOKEN;
     if (!apiToken) return res.status(500).json({ error: "Email service not configured" });
 
+    const recipients = deduplicateEmails(emails);
+    if (recipients.length === 0)
+      return res.status(200).json({ message: "No valid emails to send to" });
+
     const response = await fetch(MAILERSEND_API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiToken}` },
       body: JSON.stringify({
         from: { email: FROM_EMAIL, name: FROM_NAME },
-        to: emails.map((r) => ({ email: r.email, name: r.name || r.email })),
+        to: recipients.map((r) => ({ email: r.email, name: r.name || r.email })),
+        reply_to: { email: FROM_EMAIL, name: FROM_NAME },
         subject: `${subjectPrefix} - Bino & Vivo's Wedding`,
         html: htmlContent,
         text: textContent,

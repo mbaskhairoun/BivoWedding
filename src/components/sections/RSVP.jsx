@@ -39,6 +39,20 @@ function levenshtein(a, b) {
   return dp[m];
 }
 
+/* ──────────────── RSVP deadline formatting ──────────────── */
+// The deadline is set dynamically in the admin panel (settings/formConfig →
+// rsvpDeadline, a 'YYYY-MM-DD' string). Parse as a local date to avoid the
+// usual UTC off-by-one, and return '' when unset so the line can be hidden.
+function formatDeadline(value) {
+  if (!value) return '';
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value).trim());
+  const d = m
+    ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]))
+    : new Date(value);
+  if (isNaN(d.getTime())) return '';
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
 /* ──────────────── petal burst effect ──────────────── */
 const petalColors = [C.hydrangea, '#a8cfe0', '#d6eaf5', C.sage, '#b5ccb2', '#dfe9dc'];
 
@@ -699,15 +713,17 @@ export default function RSVP() {
             </p>
           </div>
 
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.3 }}
-          style={styles.deadline}
-        >
-          Kindly respond by June 25, 2026
-        </motion.p>
+        {formatDeadline(settings?.rsvpDeadline) && (
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.3 }}
+            style={styles.deadline}
+          >
+            Kindly respond by {formatDeadline(settings.rsvpDeadline)}
+          </motion.p>
+        )}
 
         {/* Error display */}
         <AnimatePresence>

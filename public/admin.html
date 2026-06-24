@@ -1093,6 +1093,7 @@
         <td class="text-sm">${esc(g.notes || '')}</td>
         <td>
           <div class="flex-gap">
+            <button class="btn btn-gold btn-sm" onclick="window._rsvpForGuest('${g.id}')">${g.hasRsvped ? 'Edit RSVP' : 'Set RSVP'}</button>
             <button class="btn btn-outline btn-sm" onclick="window._editGuest('${g.id}')">Edit</button>
             <button class="btn btn-danger btn-sm" onclick="window._deleteGuest('${g.id}','${esc(g.invitationName)}')">Del</button>
           </div>
@@ -1509,7 +1510,7 @@
     });
   }
 
-  function openRsvpModal(r) {
+  function openRsvpModal(r, prefillGuest) {
     $('#rsvp-form').reset();
     rsvpModalMembers = [];
     const isEdit = !!r;
@@ -1521,6 +1522,14 @@
     if (!isEdit) {
       $('#rsvp-guest-picker').innerHTML = ['<option value="">— Choose a guest (optional) —</option>']
         .concat(guests.map(g => `<option value="${g.id}">${esc(g.invitationName)}</option>`)).join('');
+      // When launched from the guest list, lock onto that guest up front.
+      if (prefillGuest) {
+        $('#rsvp-guest-picker').value = prefillGuest.id;
+        $('#rsvp-form').dataset.guestId = prefillGuest.id;
+        $('#rsvp-invitation-name').value = prefillGuest.invitationName || '';
+        if (prefillGuest.email) $('#rsvp-email').value = prefillGuest.email;
+        rsvpModalMembers = (Array.isArray(prefillGuest.members) ? prefillGuest.members : []).map(n => ({ name: n, checked: true }));
+      }
     }
 
     if (isEdit) {
@@ -1556,6 +1565,17 @@
   window._editRsvp = (id) => {
     const r = rsvps.find(x => x.id === id);
     if (r) openRsvpModal(r);
+  };
+
+  // Launched from the Guest List: edit this guest's RSVP if one exists,
+  // otherwise open a fresh record pre-filled for them.
+  window._rsvpForGuest = (guestId) => {
+    const g = guests.find(x => x.id === guestId);
+    if (!g) return;
+    const existing = rsvps.find(r => r.guestId === guestId)
+      || rsvps.find(r => (r.invitationName || r.name) === g.invitationName);
+    if (existing) openRsvpModal(existing);
+    else openRsvpModal(null, g);
   };
 
   $('#rsvp-guest-picker').addEventListener('change', (e) => {

@@ -648,6 +648,17 @@
 
     <div class="toolbar">
       <input type="text" class="search-input" id="guest-search" placeholder="Search guests..." />
+      <select class="filter-select" id="guest-status-filter">
+        <option value="all">All statuses</option>
+        <option value="attending">Attending</option>
+        <option value="maybe">Maybe</option>
+        <option value="declined">Declined</option>
+        <option value="pending">Pending</option>
+      </select>
+      <select class="filter-select" id="guest-sort">
+        <option value="name">Sort: Name (A–Z)</option>
+        <option value="status">Sort: Status</option>
+      </select>
       <button class="btn btn-primary btn-sm" id="add-guest-btn">+ Add Guest</button>
       <button class="btn btn-secondary btn-sm" id="import-btn">Import Excel/CSV</button>
     </div>
@@ -1067,10 +1078,27 @@
     }
   }
 
+  // Resolve the RSVP record (and thus status) for a guest row.
+  function guestRsvpRecord(g) {
+    return rsvps.find(r => r.guestId === g.id)
+      || rsvps.find(r => (r.invitationName || r.name) === g.invitationName)
+      || null;
+  }
+  function guestStatus(g) {
+    const r = guestRsvpRecord(g);
+    if (r) return rsvpStatusOf(r);
+    return g.hasRsvped ? 'attending' : 'pending';
+  }
+  const GUEST_STATUS_ORDER = { attending: 0, maybe: 1, declined: 2, pending: 3 };
+
   function renderGuests(filter = '') {
     const tbody = $('#guest-table-body');
     const search = filter.toLowerCase();
-    const filtered = guests.filter(g => {
+    const statusFilter = ($('#guest-status-filter') || {}).value || 'all';
+    const sortBy = ($('#guest-sort') || {}).value || 'name';
+
+    let filtered = guests.filter(g => {
+      if (statusFilter !== 'all' && guestStatus(g) !== statusFilter) return false;
       if (!search) return true;
       const haystack = [
         g.invitationName,
@@ -1081,15 +1109,25 @@
       return fuzzyMatch(haystack, search);
     });
 
-    tbody.innerHTML = filtered.map(g => `
+    if (sortBy === 'status') {
+      filtered = filtered.slice().sort((a, b) => {
+        const d = GUEST_STATUS_ORDER[guestStatus(a)] - GUEST_STATUS_ORDER[guestStatus(b)];
+        if (d !== 0) return d;
+        return (a.invitationName || '').localeCompare(b.invitationName || '');
+      });
+    }
+
+    tbody.innerHTML = filtered.map(g => {
+      const r = guestRsvpRecord(g);
+      const badge = r ? statusBadge(r)
+        : (g.hasRsvped ? '<span class="badge badge-attending">RSVPed</span>'
+                       : '<span class="badge badge-pending">Pending</span>');
+      return `
       <tr>
         <td><strong>${esc(g.invitationName)}</strong></td>
         <td>${(g.members || []).map(m => esc(m)).join(', ')}</td>
         <td>${esc(g.email || '—')}</td>
-        <td>${g.hasRsvped
-          ? '<span class="badge badge-attending">RSVPed</span>'
-          : '<span class="badge badge-pending">Pending</span>'
-        }</td>
+        <td>${badge}</td>
         <td class="text-sm">${esc(g.notes || '')}</td>
         <td>
           <div class="flex-gap">
@@ -1099,7 +1137,8 @@
           </div>
         </td>
       </tr>
-    `).join('');
+    `;
+    }).join('');
 
     // Stats
     const totalInvitations = guests.length;
@@ -1115,8 +1154,10 @@
     $('#guest-table-info').textContent = `Showing ${filtered.length} of ${guests.length} invitations`;
   }
 
-  // Search
+  // Search / filter / sort
   $('#guest-search').addEventListener('input', (e) => renderGuests(e.target.value));
+  $('#guest-status-filter').addEventListener('change', () => renderGuests($('#guest-search').value));
+  $('#guest-sort').addEventListener('change', () => renderGuests($('#guest-search').value));
 
   // Fuzzy match
   function fuzzyMatch(haystack, needle) {
